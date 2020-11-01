@@ -1,5 +1,7 @@
 package com.zerra.client
 
+import com.zerra.client.render.GameWindow
+import com.zerra.client.render.RenderManager
 import com.zerra.common.Zerra
 import com.zerra.common.network.Side
 
@@ -22,6 +24,25 @@ class ZerraClient private constructor(): Zerra() {
 
     init {
         localSide.set(Side.CLIENT)
+    }
+
+    val renderManager: RenderManager = RenderManager()
+
+    fun startup() {
+        // Create window
+        val window = GameWindow(1920, 1080)
+
+        // create context
+        // TODO
+
+        // fire phases
+        preInit()
+        init()
+        postInit()
+    }
+
+    fun render() {
+        renderManager.render()
     }
 
     override fun update() = TODO("Not yet implemented")
