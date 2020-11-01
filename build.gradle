@@ -39,6 +39,10 @@ subprojects {
         // https://mvnrepository.com/artifact/io.netty/netty-all
         implementation group: 'io.netty', name: 'netty-all', version: '4.1.53.Final'
 
+        // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+        implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.3.0-alpha5'
+
+
         implementation 'com.github.bvanseg:kotlincommons:2.7.0-alpha2'
     }
 
