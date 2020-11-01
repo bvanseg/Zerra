@@ -1,0 +1,69 @@
+build/
+out/
+target/
+.gradle/
+
+.mvn/wrapper/maven-wrapper.jar
+HELP.md
+mvnw
+mvnw.cmd
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+!/.idea/codeStyles/
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+/build/
+
+### VS Code ###
+.vscode/
+
+### Misc ###
+/config/
+/logs/
+/data/
+
+### C/C++ ###
+.vs/
+cmake-build-*/
+CMakeFiles/
+Debug/
+
+*.cmake
+*.filters
+*.lib
+*.sln
+*.user
+*.vcxproj
+
+CMakeCache.txt
+
+### OPRA ###
+*.nx2
+
+### Website Assets ###
+website/src/main/resources/static/dashboard-ui/css/demo_2/style.css
+website/src/main/resources/static/dashboard-ui/css/demo_2/style.css.map
+website/src/main/resources/static/dashboard-ui/node_modules
+website/src/main/resources/static/dashboard-ui/package-lock.json
+website/src/main/resources/static/website-ui/css/maps/style.css.map
+website/src/main/resources/static/website-ui/css/style.css
+website/src/main/resources/static/website-ui/node_modules
+website/src/main/resources/static/website-ui/package-lock.json

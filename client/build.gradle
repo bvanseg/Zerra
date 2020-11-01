@@ -1,0 +1,5 @@
+group 'com.zerra.client'
+
+dependencies {
+    implementation project(':common')
+}
