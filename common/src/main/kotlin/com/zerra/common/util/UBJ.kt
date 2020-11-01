@@ -8,6 +8,7 @@ import com.devsmart.ubjson.UBWriter
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.math.BigInteger
+import java.util.*
 
 
 /**
@@ -50,6 +51,10 @@ class UBJ(initUBO: UBObject? = null) {
             UBObject::class -> value as UBObject
             UBJ::class -> (value as UBJ).ubo
             BigInteger::class -> UBValueFactory.createArray((value as BigInteger).toByteArray())
+            UUID::class -> {
+                val uuid = value as UUID
+                UBValueFactory.createArray(longArrayOf(uuid.mostSignificantBits, uuid.leastSignificantBits))
+            }
             else -> {
                 if(value is Array<*> && value.isArrayOf<String>()) {
                     UBValueFactory.createArray(value as Array<String>)
@@ -75,6 +80,8 @@ class UBJ(initUBO: UBObject? = null) {
 
     fun putFloat(key: String, value: Float) = ubo.put(key, UBValueFactory.createFloat32(value))
     fun putDouble(key: String, value: Double) = ubo.put(key, UBValueFactory.createFloat64(value))
+
+    fun putUUID(key: String, value: UUID) = ubo.put(key, UBValueFactory.createArray(longArrayOf(value.mostSignificantBits, value.leastSignificantBits)))
 
     fun putString(key: String, value: String) = ubo.put(key, UBValueFactory.createString(value))
 
@@ -131,6 +138,10 @@ class UBJ(initUBO: UBObject? = null) {
     fun readString(key: String): String = ubo[key]!!.asString()
     fun readStringNullable(key: String): String? = ubo[key]?.asString()
     fun readStringOrDefault(key: String, default: String): String = ubo[key]?.asString() ?: default
+
+    fun readUUID(key: String): UUID = ubo[key]!!.asInt64Array().let { UUID(it[0], it[1]) }
+    fun readUUIDNullable(key: String): UUID? = ubo[key]?.asInt64Array()?.let { UUID(it[0], it[1]) }
+    fun readUUIDOrDefault(key: String, default: UUID): UUID = ubo[key]?.asInt64Array()?.let { UUID(it[0], it[1]) } ?: default
 
     fun readBooleanArray(key: String): BooleanArray = ubo[key]!!.asBoolArray()
     fun readBooleanArrayNullable(key: String): BooleanArray? = ubo[key]?.asBoolArray()

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.math.BigInteger
+import java.util.*
 
 class TestUBJ {
 
@@ -89,6 +90,19 @@ class TestUBJ {
 
         // THEN
         assertEquals(-1.1, ubj.readDouble("value"))
+    }
+
+    @Test
+    fun testUBJUUID() {
+        // GIVEN
+        val ubj = UBJ()
+        val uuid = UUID.randomUUID()
+
+        // WHEN
+        ubj.putUUID("value", uuid)
+
+        // THEN
+        assertEquals(uuid, ubj.readUUID("value"))
     }
 
     @Test
