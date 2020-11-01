@@ -39,7 +39,7 @@ subprojects {
         // https://mvnrepository.com/artifact/io.netty/netty-all
         implementation group: 'io.netty', name: 'netty-all', version: '4.1.53.Final'
 
-        implementation 'com.github.bvanseg:kotlincommons:2.6.5'
+        implementation 'com.github.bvanseg:kotlincommons:2.7.0-alpha2'
     }
 
     repositories {
