@@ -1,4 +1,4 @@
-package com.zerra.common.util
+package com.zerra.common.util.storage
 
 import bvanseg.kotlincommons.any.getLogger
 import com.devsmart.ubjson.UBObject

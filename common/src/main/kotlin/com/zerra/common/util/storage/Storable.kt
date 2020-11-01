@@ -1,4 +1,4 @@
-package com.zerra.common.util
+package com.zerra.common.util.storage
 
 import com.devsmart.ubjson.UBObject
 

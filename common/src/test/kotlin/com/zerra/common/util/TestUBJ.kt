@@ -1,5 +1,6 @@
 package com.zerra.common.util
 
+import com.zerra.common.util.storage.UBJ
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
