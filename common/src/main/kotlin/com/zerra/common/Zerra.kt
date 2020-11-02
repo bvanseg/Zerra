@@ -14,6 +14,16 @@ abstract class Zerra {
 
     companion object {
         const val TICKS_PER_SECOND = 60
+
+        var zerraInstance: Zerra? = null
+
+        fun getInstance(): Zerra {
+            if (zerraInstance == null) {
+                throw IllegalStateException("Attempted to fetch Zerra instance when it was null!")
+            }
+
+            return zerraInstance!!
+        }
     }
 
     /**

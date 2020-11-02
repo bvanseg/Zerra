@@ -29,6 +29,7 @@ class ZerraClient private constructor(): Zerra() {
             if(instance == null) {
                 logger.info("Creating ZerraClient instance")
                 instance = ZerraClient()
+                zerraInstance = instance
             }
 
             return instance!!

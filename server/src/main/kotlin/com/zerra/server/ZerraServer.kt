@@ -28,6 +28,10 @@ class ZerraServer: Zerra() {
         fun getInstance(): ZerraServer {
             if(instance == null) {
                 instance = ZerraServer()
+
+                if(zerraInstance == null) {
+                    zerraInstance = instance
+                }
             }
 
             return instance!!
