@@ -11,7 +11,7 @@ import io.github.classgraph.ScanResult
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-open class ResourceManager(private val root: String, private val domain: String) {
+open class ResourceManager(val root: String, private val domain: String) {
 
     val logger = getLogger()
 

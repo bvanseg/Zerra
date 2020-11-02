@@ -15,7 +15,7 @@ import java.io.InputStream
 data class ResourceLocation(val resourceManager: ResourceManager, val domain: String, val location: String): AutoCloseable {
 
     val path: String
-        get() = "$domain/$location"
+        get() = "${resourceManager.root}$domain/$location"
 
     constructor(parent: ResourceLocation): this(parent.resourceManager, parent.domain, parent.location)
 
@@ -30,6 +30,7 @@ data class ResourceLocation(val resourceManager: ResourceManager, val domain: St
     override fun close() = inputStream.close()
 
     override fun toString(): String = ToStringBuilder.builder(this)
+        .append("root", resourceManager.root)
         .append("domain", domain)
         .append("location", location)
         .append("path", path)
