@@ -13,25 +13,31 @@ import kotlin.reflect.KClass
  */
 abstract class RegistryManager {
 
-    companion object {
-        val logger = getLogger()
-    }
+    val logger = getLogger()
 
     val registries = hashMapOf<KClass<*>, Registry<*>>()
 
-    val REALM_REGISTRY = addRegistry<Realm>()
-    val ENTITY_REGISTRY = addRegistry<Entity>()
+    val REALM_REGISTRY = addInstanceRegistry<Realm>()
+    val ENTITY_REGISTRY = addFactoryRegistry<Entity>()
 
-    inline fun <reified T : Any> addRegistry(noinline factory: (RegistryEntry<T>) -> T? = { entry ->
+    inline fun <reified T : Any> addInstanceRegistry(): InstanceRegistry<T> {
+        logger.info("Creating new registry for object of type: ${T::class}")
+        val newRegistry = InstanceRegistry<T>()
+        registries[T::class] = newRegistry
+        return newRegistry
+    }
+
+    inline fun <reified T : Any> addFactoryRegistry(noinline factory: (FactoryRegistryEntry<T>) -> T? = { entry ->
         createNewInstance(entry.value.java)
-    }): Registry<T> {
+    }): FactoryRegistry<T> {
         logger.info("Creating new registry for type: ${T::class}")
-        val newRegistry = Registry(factory = factory)
+        val newRegistry = FactoryRegistry(factory = factory)
         registries[T::class] = newRegistry
         return newRegistry
     }
 
     open fun init() {
+        logger.info("Initializing registry manager")
         ENTITY_REGISTRY.register(EntityPlayer::class)
     }
 }

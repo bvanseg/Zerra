@@ -1,5 +1,6 @@
 package com.zerra.client
 
+import com.zerra.client.entity.ClientEntityPlayer
 import com.zerra.client.render.entity.RenderClientPlayer
 import com.zerra.client.render.entity.RenderEntity
 import com.zerra.common.api.registry.RegistryManager
@@ -10,10 +11,14 @@ import com.zerra.common.api.registry.RegistryManager
  */
 object ClientRegistryManager: RegistryManager() {
 
-    val ENTITY_RENDER_REGISTRY = addRegistry<RenderEntity<*>>()
+    val ENTITY_RENDER_REGISTRY = addInstanceRegistry<RenderEntity<*>>()
 
     override fun init() {
         super.init()
-        ENTITY_RENDER_REGISTRY.register(RenderClientPlayer::class)
+        // Entities
+        ENTITY_REGISTRY.register(ClientEntityPlayer::class)
+
+        // Renders
+        ENTITY_RENDER_REGISTRY.register(RenderClientPlayer())
     }
 }

@@ -36,7 +36,10 @@ abstract class Zerra {
 
     fun getSide(): Side = localSide.get()
 
-    abstract fun init()
+    open fun init() {
+        this.getRegistryManager().init()
+    }
+
     abstract fun createGame()
 
     abstract fun update()

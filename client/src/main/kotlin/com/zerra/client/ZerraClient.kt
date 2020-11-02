@@ -41,9 +41,9 @@ class ZerraClient private constructor(): Zerra() {
     }
 
     override fun init() {
-        logger.info("Starting up ZerraClient")
-        ClientRegistryManager.ENTITY_REGISTRY.register(ClientEntityPlayer::class)
+        super.init()
 
+        logger.info("Starting up ZerraClient")
         initClient()
     }
 
@@ -51,9 +51,6 @@ class ZerraClient private constructor(): Zerra() {
         // Create window
         GameWindow.init()
         GameWindow.create(1920, 1080, "Zerra")
-
-        // create context
-        // TODO
     }
 
     fun render() {
