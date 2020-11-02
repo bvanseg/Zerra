@@ -1,6 +1,6 @@
 package com.zerra.client
 
-import com.zerra.common.RegistryManager
+import com.zerra.common.api.registry.RegistryManager
 
 /**
  * @author Boston Vanseghi

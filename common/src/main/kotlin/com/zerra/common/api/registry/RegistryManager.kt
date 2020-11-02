@@ -1,7 +1,6 @@
-package com.zerra.common
+package com.zerra.common.api.registry
 
 import bvanseg.kotlincommons.any.getLogger
-import com.zerra.common.api.registry.Registry
 import com.zerra.common.entity.Entity
 import com.zerra.common.entity.EntityPlayer
 import com.zerra.common.realm.Realm

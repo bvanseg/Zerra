@@ -1,5 +1,7 @@
 package com.zerra.common
 
+import com.zerra.common.api.registry.RegistryManager
+import com.zerra.common.api.state.StateManager
 import com.zerra.common.network.Side
 
 /**
@@ -21,7 +23,9 @@ abstract class Zerra {
     fun getSide(): Side = localSide.get()
 
     abstract fun init()
+    abstract fun createGame()
 
     abstract fun update()
+    abstract fun getStateManager(): StateManager
     abstract fun getRegistryManager(): RegistryManager
 }

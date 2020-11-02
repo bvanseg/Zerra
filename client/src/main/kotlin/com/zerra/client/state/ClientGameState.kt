@@ -2,14 +2,14 @@ package com.zerra.client.state
 
 import com.zerra.client.entity.ClientEntityPlayer
 import com.zerra.client.render.GameRenderManager
-import com.zerra.common.Universe
+import com.zerra.common.realm.Universe
 import com.zerra.common.realm.Realm
 
 /**
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-class GameState: State {
+class ClientGameState: ClientState {
 
     private val activeRealm: Realm? = null
 

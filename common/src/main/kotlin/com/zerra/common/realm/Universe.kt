@@ -1,6 +1,4 @@
-package com.zerra.common
-
-import com.zerra.common.realm.RealmManager
+package com.zerra.common.realm
 
 /**
  * Represents the entirety of all that exists within the game.
