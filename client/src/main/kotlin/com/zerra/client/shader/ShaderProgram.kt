@@ -1,9 +1,11 @@
 package com.zerra.client.shader
 
 import bvanseg.kotlincommons.any.getLogger
+import com.zerra.common.util.resource.ResourceLocation
 import org.joml.*
 import org.lwjgl.opengl.GL33C.*
 import org.lwjgl.system.NativeResource
+import java.io.ByteArrayOutputStream
 
 class ShaderProgram : NativeResource {
 
@@ -103,9 +105,23 @@ class ShaderProgram : NativeResource {
         private val MATRIX_3_2 = FloatArray(6)
         private val MATRIX_2_2 = FloatArray(4)
 
-//        private fun loadShader(shaderName: CharSequence, resourceManager: ResourceManager): Shader? {
-//            return resourceManager.get
-//        }
+        private fun loadShader(shaderLocation: ResourceLocation): Shader? {
+            if (!shaderLocation.resourceExists)
+                return null
+            return shaderLocation.inputStream!!.runCatching {
+
+                val out = ByteArrayOutputStream()
+                val buffer = ByteArray(1024)
+                var read: Int
+                while (this.read(buffer).also { read = it } >= 0) {
+                    out.write(buffer, 0, read)
+                }
+
+                val data = out.toString(Charsets.UTF_8)
+
+                null
+            }.getOrNull()
+        }
 
         fun unbind() {
             glUseProgram(0)
