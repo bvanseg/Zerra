@@ -6,7 +6,7 @@ import com.zerra.common.entity.EntityManager
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-class Realm {
+class Realm(val name: String) {
 
     var ticksExisted: Long = 0
     private val entityManager = EntityManager(this)
