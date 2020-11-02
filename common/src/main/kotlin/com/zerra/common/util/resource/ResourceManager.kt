@@ -14,5 +14,5 @@ open class ResourceManager(val root: String, private val domain: String) {
 
     fun getResourceAtLocation(location: String): ResourceLocation = ResourceLocation(this, domain, location)
 
-    fun resourceExists(location: String): Boolean = !resources.getResourcesWithPath("$root$domain/$location").isEmpty()
+    fun resourceExists(location: String): Boolean = !MasterResourceManager.resources.getResourcesWithPath("$root$domain/$location").isEmpty()
 }
