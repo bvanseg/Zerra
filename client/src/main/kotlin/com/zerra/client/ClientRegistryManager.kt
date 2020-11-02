@@ -4,6 +4,8 @@ import com.zerra.client.entity.ClientEntityPlayer
 import com.zerra.client.render.entity.RenderClientPlayer
 import com.zerra.client.render.entity.RenderEntity
 import com.zerra.common.api.registry.RegistryManager
+import com.zerra.common.entity.Entity
+import kotlin.reflect.KClass
 
 /**
  * @author Boston Vanseghi
@@ -11,7 +13,7 @@ import com.zerra.common.api.registry.RegistryManager
  */
 object ClientRegistryManager: RegistryManager() {
 
-    val ENTITY_RENDER_REGISTRY = addInstanceRegistry<RenderEntity<*>>()
+    val ENTITY_RENDER_REGISTRY = addInstanceRegistry<KClass<out Entity>, RenderEntity<*>>()
 
     override fun init() {
         super.init()
@@ -19,6 +21,6 @@ object ClientRegistryManager: RegistryManager() {
         ENTITY_REGISTRY.register(ClientEntityPlayer::class)
 
         // Renders
-        ENTITY_RENDER_REGISTRY.register(RenderClientPlayer())
+        ENTITY_RENDER_REGISTRY.register(ClientEntityPlayer::class, RenderClientPlayer())
     }
 }

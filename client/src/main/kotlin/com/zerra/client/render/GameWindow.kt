@@ -11,8 +11,7 @@ import org.lwjgl.system.NativeResource
 import java.nio.IntBuffer
 
 /**
- *
- * @author Boston Vanseghi
+ * @author Ocelot5836
  * @since 0.0.1
  */
 object GameWindow : NativeResource {

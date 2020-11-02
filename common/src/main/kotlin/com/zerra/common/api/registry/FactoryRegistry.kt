@@ -10,9 +10,7 @@ import kotlin.reflect.KClass
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-class FactoryRegistry<T : Any>(val factory: (FactoryRegistryEntry<T>) -> T?): Registry<T> {
-
-    private val entries = ConcurrentHashMap<KClass<out T>, FactoryRegistryEntry<out T>>()
+class FactoryRegistry<T : Any>(val factory: (FactoryRegistryEntry<T>) -> T?): Registry<KClass<out T>, T>() {
 
     private val logger = getLogger()
 
@@ -34,6 +32,6 @@ class FactoryRegistry<T : Any>(val factory: (FactoryRegistryEntry<T>) -> T?): Re
         logger.info("Successfully unregistered entry $value")
     }
 
-    fun getEntry(klass: KClass<*>) = entries[klass]
-    fun getEntry(obj: T) = entries[obj::class]
+    fun getEntry(klass: KClass<T>) = entries[klass] as FactoryRegistryEntry<T>?
+    fun getEntry(obj: T) = entries[obj::class] as FactoryRegistryEntry<T>?
 }

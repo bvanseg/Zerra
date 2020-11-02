@@ -10,13 +10,11 @@ import kotlin.reflect.KClass
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-class InstanceRegistry<T : Any>(): Registry<T> {
-
-    private val entries = ConcurrentHashMap<KClass<out T>, InstanceRegistryEntry<out T>>()
+class InstanceRegistry<K, V : Any>: Registry<K, V>() {
 
     private val logger = getLogger()
 
-    fun register(value: T) {
+    fun register(key: K, value: V) {
         val entry = InstanceRegistryEntry(this, value)
 
         if(entries.contains(entry)) {
@@ -24,16 +22,15 @@ class InstanceRegistry<T : Any>(): Registry<T> {
         }
 
 
-        entries[value::class] = entry
+        entries[key] = entry
 
         logger.info("Successfully registered entry $value")
     }
 
-    fun unregister(value: KClass<T>) {
+    fun unregister(value: KClass<V>) {
         val entry = entries.remove(value)
         logger.info("Successfully unregistered entry $value")
     }
 
-    fun getEntry(klass: KClass<*>) = entries[klass]
-    fun getEntry(obj: T) = entries[obj::class]
+    fun getEntry(key: K) = entries[key] as InstanceRegistryEntry?
 }

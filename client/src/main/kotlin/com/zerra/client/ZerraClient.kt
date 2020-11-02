@@ -70,5 +70,5 @@ class ZerraClient private constructor(): Zerra() {
     }
 
     override fun getStateManager(): StateManager = ClientStateManager
-    override fun getRegistryManager(): RegistryManager = ClientRegistryManager
+    override fun getRegistryManager(): ClientRegistryManager = ClientRegistryManager
 }

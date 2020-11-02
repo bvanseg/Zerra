@@ -24,13 +24,10 @@ class ClientGameState: ClientState {
 
     override fun render() {
 
-        activeRealm?.let { realm ->
-            val realmRenderer = renderManager.getRendererFor(realm)
-            realmRenderer.render(realm)
-        }
+        // TODO: Render active realm here.
 
-        val playerRenderer = renderManager.getRendererFor(clientPlayer)
-        playerRenderer.render(clientPlayer)
+        val playerRenderer = renderManager.getEntityRendererFor(clientPlayer)
+        playerRenderer?.render(clientPlayer)
 
         // Render the HUD last
         renderManager.renderHUD()
