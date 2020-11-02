@@ -82,7 +82,7 @@ object GameWindow : NativeResource {
         GL.createCapabilities()
     }
 
-    fun pollEvents() {
+    fun update() {
         glfwSwapBuffers(windowId)
         glfwPollEvents()
     }
