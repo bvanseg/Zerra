@@ -14,7 +14,7 @@ fun main() {
     glBindVertexArray(vao)
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo1)
-    glBufferData(GL_ARRAY_BUFFER, floatArrayOf(-0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, -0.5f), GL_STREAM_DRAW)
+    glBufferData(GL_ARRAY_BUFFER, floatArrayOf(-0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, -0.5f), GL_DYNAMIC_DRAW)
     glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0)
     glBindBuffer(GL_ARRAY_BUFFER, 0)
 
