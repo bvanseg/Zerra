@@ -20,5 +20,8 @@ abstract class Zerra {
 
     fun getSide(): Side = localSide.get()
 
+    abstract fun init()
+
     abstract fun update()
+    abstract fun getRegistryManager(): RegistryManager
 }

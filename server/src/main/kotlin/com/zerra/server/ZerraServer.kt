@@ -1,8 +1,13 @@
 package com.zerra.server
 
+import com.zerra.common.RegistryManager
 import com.zerra.common.Zerra
 import com.zerra.common.network.Side
 
+/**
+ * @author Boston Vanseghi
+ * @since 0.0.1
+ */
 class ZerraServer: Zerra() {
 
     companion object {
@@ -24,5 +29,11 @@ class ZerraServer: Zerra() {
         localSide.set(Side.SERVER)
     }
 
+    override fun init() {
+        TODO("Not yet implemented")
+    }
+
     override fun update() = TODO("Not yet implemented")
+
+    override fun getRegistryManager(): RegistryManager = ServerRegistryManager
 }

@@ -1,0 +1,36 @@
+package com.zerra.common.api.registry
+
+import bvanseg.kotlincommons.any.getLogger
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.reflect.KClass
+
+/**
+ * Represents the base of a registry.
+ *
+ * @author Boston Vanseghi
+ * @since 0.0.1
+ */
+class Registry<T : Any> {
+
+    private val entries = ConcurrentHashMap<KClass<out T>, RegistryEntry<out T>>()
+
+    private val logger = getLogger()
+
+    fun register(value: KClass<out T>, localizedName: String) {
+        val entry = RegistryEntry(value, localizedName)
+
+        if(entries.contains(entry)) {
+            throw IllegalStateException("Attempted to register an entry that already exists: $value")
+        }
+
+
+        entries[value] = entry
+
+        logger.info("Successfully registered entry $value")
+    }
+
+    fun unregister(value: KClass<T>) {
+        entries.remove(value)
+        logger.info("Successfully unregistered entry $value")
+    }
+}

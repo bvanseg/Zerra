@@ -1,6 +1,6 @@
 package com.zerra.client.state
 
-import com.zerra.client.entity.EntityClientPlayer
+import com.zerra.client.entity.ClientEntityPlayer
 import com.zerra.client.render.GameRenderManager
 import com.zerra.common.Universe
 import com.zerra.common.realm.Realm
@@ -13,7 +13,7 @@ class GameState: State {
 
     private val activeRealm: Realm? = null
 
-    private val clientPlayer = EntityClientPlayer()
+    private val clientPlayer = ClientEntityPlayer()
 
     private val universe = Universe()
     private val renderManager = GameRenderManager()
