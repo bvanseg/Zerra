@@ -1,6 +1,7 @@
 package com.zerra.common.api.registry
 
 import bvanseg.kotlincommons.any.getLogger
+import bvanseg.kotlincommons.javaclass.createNewInstance
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.reflect.KClass
@@ -11,7 +12,7 @@ import kotlin.reflect.KClass
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-class Registry<T : Any> {
+class Registry<T : Any>(val factory: (RegistryEntry<T>) -> T?) {
 
     private val currentID = AtomicLong()
 
@@ -21,7 +22,7 @@ class Registry<T : Any> {
     private val logger = getLogger()
 
     fun register(value: KClass<out T>, localizedName: String) {
-        val entry = RegistryEntry(value, currentID.getAndIncrement(), localizedName)
+        val entry = RegistryEntry(this, value, currentID.getAndIncrement(), localizedName)
 
         if(classEntries.contains(entry)) {
             throw IllegalStateException("Attempted to register an entry that already exists: $value")

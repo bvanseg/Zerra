@@ -1,6 +1,7 @@
 package com.zerra.common.api.registry
 
 import bvanseg.kotlincommons.any.getLogger
+import bvanseg.kotlincommons.javaclass.createNewInstance
 import com.zerra.common.entity.Entity
 import com.zerra.common.entity.EntityPlayer
 import com.zerra.common.realm.Realm
@@ -18,13 +19,18 @@ abstract class RegistryManager {
 
     val registries = hashMapOf<KClass<*>, Registry<*>>()
 
-    val REALM_REGISTRY = addRegistry<Realm>()
+    val REALM_REGISTRY = addRegistry<Realm> { entry ->
+        createNewInstance(entry.value.java, arrayOf(Long::class.java), entry.id)
+    }
+
     val ENTITY_REGISTRY = addRegistry<Entity>()
 
-    inline fun <reified T : Any> addRegistry(): Registry<T> {
+    inline fun <reified T : Any> addRegistry(noinline factory: (RegistryEntry<T>) -> T? = { entry ->
+        createNewInstance(entry.value.java)
+    }): Registry<T> {
         logger.info("Creating new registry for type: ${T::class}")
-        val newRegistry = Registry<T>()
-        registries[T::class] = Registry<T>()
+        val newRegistry = Registry(factory = factory)
+        registries[T::class] = newRegistry
         return newRegistry
     }
 
