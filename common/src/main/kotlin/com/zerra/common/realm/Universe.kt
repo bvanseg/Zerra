@@ -12,8 +12,8 @@ class Universe {
     val realmManager = RealmManager()
 
     fun update() {
-        realmManager.loadedRealms.forEach { realm ->
-            realm.update()
+        realmManager.loadedRealms.forEach {
+            it.value.update()
         }
         ticksExisted++
     }

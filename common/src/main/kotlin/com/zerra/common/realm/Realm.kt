@@ -13,4 +13,12 @@ class Realm(val id: Long) {
             it.value.update()
         }
     }
+
+    fun load() {
+        // TODO
+    }
+
+    fun unload() {
+        // TODO
+    }
 }
