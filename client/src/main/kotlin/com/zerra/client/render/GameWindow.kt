@@ -1,5 +1,6 @@
 package com.zerra.client.render
 
+import bvanseg.kotlincommons.any.getLogger
 import org.lwjgl.glfw.Callbacks.glfwFreeCallbacks
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback
@@ -16,6 +17,8 @@ import java.nio.IntBuffer
  */
 object GameWindow : NativeResource {
 
+    val logger = getLogger()
+
     private var windowId = NULL
     var closeRequested = false
         private set
@@ -29,12 +32,14 @@ object GameWindow : NativeResource {
         private set
 
     fun init() {
+        logger.info("Initializing GLFW")
         GLFWErrorCallback.createPrint(System.err).set()
         if (!glfwInit())
             throw RuntimeException("Failed to initialize GLFW")
     }
 
     fun create(width: Int, height: Int, name: CharSequence) {
+        logger.info("Creating game window")
         if (windowId != NULL)
             throw IllegalStateException("Multiple windows are not supported")
 
