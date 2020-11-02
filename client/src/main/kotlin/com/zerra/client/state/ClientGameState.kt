@@ -29,8 +29,7 @@ class ClientGameState: ClientState {
         val playerRenderer = renderManager.getEntityRendererFor(clientPlayer)
         playerRenderer?.render(clientPlayer)
 
-        // Render the HUD last
-        renderManager.renderHUD()
+        // TODO: Render HUD here.
     }
 
     override fun update() {

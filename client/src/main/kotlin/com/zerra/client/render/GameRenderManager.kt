@@ -10,9 +10,5 @@ import com.zerra.common.entity.Entity
  */
 class GameRenderManager {
 
-    inline fun <reified T: Entity> getEntityRendererFor(entity: T): RenderEntity<T>? = ZerraClient.getInstance().getRegistryManager().ENTITY_RENDER_REGISTRY.getEntry(T::class)?.value as RenderEntity<T>?
-
-    fun renderHUD() {
-        // TODO
-    }
+    fun <T: Entity> getEntityRendererFor(entity: T): RenderEntity<T>? = ZerraClient.getInstance().getRegistryManager().ENTITY_RENDER_REGISTRY.getEntry(entity::class)?.value as RenderEntity<T>?
 }
