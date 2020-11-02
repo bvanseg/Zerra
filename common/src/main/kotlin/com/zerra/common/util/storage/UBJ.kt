@@ -66,6 +66,8 @@ class UBJ(initUBO: UBObject? = null) {
         }
     }
 
+    fun put(key: String, value: Any?) = set(key, value)
+
     /** WRITING **/
 
     fun putChar(key: String, value: Char) = ubo.put(key, UBValueFactory.createChar(value))
