@@ -3,6 +3,8 @@ package com.zerra.common
 import com.zerra.common.api.registry.RegistryManager
 import com.zerra.common.api.state.StateManager
 import com.zerra.common.network.Side
+import com.zerra.common.util.resource.MasterResourceManager
+import com.zerra.common.util.resource.ResourceManager
 
 /**
  * Common game class for both client and server side instances.
@@ -37,12 +39,18 @@ abstract class Zerra {
     fun getSide(): Side = localSide.get()
 
     open fun init() {
+        this.getResourceManager().scanResources()
         this.getRegistryManager().init()
     }
 
     abstract fun createGame()
 
     abstract fun update()
+
+    private val primaryResourceManager = MasterResourceManager.createResourceManager("assets/", "zerra")
+
+    fun getResourceManager(): ResourceManager = primaryResourceManager
+
     abstract fun getStateManager(): StateManager
     abstract fun getRegistryManager(): RegistryManager
 }
