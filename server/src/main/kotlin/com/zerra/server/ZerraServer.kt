@@ -44,7 +44,7 @@ class ZerraServer: Zerra() {
 
         initServer()
 
-        every((1000 / 60.0).milliseconds) {
+        every((1000 / TICKS_PER_SECOND).milliseconds) {
             this.update()
         }.execute()
     }

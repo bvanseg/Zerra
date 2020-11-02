@@ -12,6 +12,10 @@ import com.zerra.common.network.Side
  */
 abstract class Zerra {
 
+    companion object {
+        const val TICKS_PER_SECOND = 60
+    }
+
     /**
      * Stores the side within the current thread. When this variable is set during the initialization of the
      * respective ZerraClient and ZerraServer classes, any threads spawned from those threads will also carry this value.
