@@ -40,8 +40,8 @@ object GameWindow : NativeResource {
             throw IllegalStateException("Multiple windows are not supported")
 
         // Create window
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 1)
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1)
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3)
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2)
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE)
 
         windowId = glfwCreateWindow(width, height, name, NULL, NULL)
