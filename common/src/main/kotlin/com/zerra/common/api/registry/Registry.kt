@@ -2,6 +2,7 @@ package com.zerra.common.api.registry
 
 import bvanseg.kotlincommons.any.getLogger
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicLong
 import kotlin.reflect.KClass
 
 /**
@@ -12,25 +13,34 @@ import kotlin.reflect.KClass
  */
 class Registry<T : Any> {
 
-    private val entries = ConcurrentHashMap<KClass<out T>, RegistryEntry<out T>>()
+    private val currentID = AtomicLong()
+
+    private val classEntries = ConcurrentHashMap<KClass<out T>, RegistryEntry<out T>>()
+    private val idEntries = ConcurrentHashMap<Long, RegistryEntry<out T>>()
 
     private val logger = getLogger()
 
     fun register(value: KClass<out T>, localizedName: String) {
-        val entry = RegistryEntry(value, localizedName)
+        val entry = RegistryEntry(value, currentID.getAndIncrement(), localizedName)
 
-        if(entries.contains(entry)) {
+        if(classEntries.contains(entry)) {
             throw IllegalStateException("Attempted to register an entry that already exists: $value")
         }
 
 
-        entries[value] = entry
+        idEntries[entry.id] = entry
+        classEntries[value] = entry
 
         logger.info("Successfully registered entry $value")
     }
 
     fun unregister(value: KClass<T>) {
-        entries.remove(value)
+        val entry = classEntries.remove(value)
+        entry?.let {
+            idEntries.remove(it.id)
+        }
         logger.info("Successfully unregistered entry $value")
     }
+
+    fun getEntryById(id: Long): RegistryEntry<out T>? = idEntries[id]
 }
