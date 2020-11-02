@@ -9,7 +9,7 @@ fun main() {
     val vao = glGenVertexArrays()
     val vbo1 = glGenBuffers()
     val vbo2 = glGenBuffers()
-    
+
     glBindVertexArray(vao)
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo1)
@@ -32,7 +32,7 @@ fun main() {
         glDisableVertexAttribArray(0)
         glBindVertexArray(0)
 
-        GameWindow.pollEvents()
+        GameWindow.update()
     }
     GameWindow.free()
     glDeleteBuffers(vbo1)
