@@ -39,7 +39,7 @@ abstract class Zerra {
     fun getSide(): Side = localSide.get()
 
     open fun init() {
-        this.getResourceManager().scanResources()
+        MasterResourceManager.scanResources()
         this.getRegistryManager().init()
     }
 

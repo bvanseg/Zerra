@@ -22,7 +22,7 @@ data class ResourceLocation(val resourceManager: ResourceManager, val domain: St
 
     constructor(parent: ResourceLocation) : this(parent.resourceManager, parent.domain, parent.location)
 
-    private val resource by lazy { resourceManager.resources.getResourcesWithPath(path).firstOrNull() }
+    private val resource by lazy { MasterResourceManager.resources.getResourcesWithPath(path).firstOrNull() }
 
     val inputStream: InputStream? by lazy { if (resource != null) resource!!.open() else null }
     val file: File? by lazy { if (resource != null) resource!!.classpathElementFile else null }
