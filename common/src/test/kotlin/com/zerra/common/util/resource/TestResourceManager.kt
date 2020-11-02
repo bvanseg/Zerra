@@ -12,7 +12,7 @@ class TestResourceManager {
         val manager = MasterResourceManager.createResourceManager("assets/", "zerra")
 
         // WHEN
-        manager.scanResources()
+        MasterResourceManager.scanResources()
         val foobar = manager.getResourceAtLocation("foobar.txt")
 
         // THEN
@@ -27,7 +27,7 @@ class TestResourceManager {
         val manager = MasterResourceManager.createResourceManager("assets/", "zerra")
 
         // WHEN
-        manager.scanResources()
+        MasterResourceManager.scanResources()
         val foobar = manager.getResourceAtLocation("foobar.txt")
 
         // THEN
