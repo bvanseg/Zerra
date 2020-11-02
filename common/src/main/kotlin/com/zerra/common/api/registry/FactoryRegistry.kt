@@ -32,6 +32,6 @@ class FactoryRegistry<T : Any>(val factory: (FactoryRegistryEntry<T>) -> T?): Re
         logger.info("Successfully unregistered entry $value")
     }
 
-    fun getEntry(klass: KClass<T>) = entries[klass] as FactoryRegistryEntry<T>?
-    fun getEntry(obj: T) = entries[obj::class] as FactoryRegistryEntry<T>?
+    fun getEntry(klass: KClass<out T>) = entries[klass] as FactoryRegistryEntry<T>?
+    fun getEntry(obj: T) = getEntry(obj::class)
 }
