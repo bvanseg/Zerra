@@ -9,7 +9,7 @@ import com.zerra.common.realm.Universe
  */
 class ServerGameState: State {
 
-    val universe = Universe()
+    private val universe = Universe()
 
     override fun init() {
         // TODO

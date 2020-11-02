@@ -9,7 +9,7 @@ import com.zerra.common.entity.EntityManager
 class Realm {
 
     var ticksExisted: Long = 0
-    val entityManager = EntityManager(this)
+    private val entityManager = EntityManager(this)
 
     fun update() {
         ticksExisted++

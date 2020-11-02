@@ -53,7 +53,7 @@ class ZerraServer: Zerra() {
         }.execute()
     }
 
-    fun initServer() {
+    private fun initServer() {
         // TODO
     }
 
