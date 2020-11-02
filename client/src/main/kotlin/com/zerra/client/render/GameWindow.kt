@@ -34,7 +34,7 @@ object GameWindow : NativeResource {
             throw RuntimeException("Failed to initialize GLFW")
     }
 
-    fun create(width: Int, height: Int, name: CharSequence) {
+    fun create(width: Int, height: Int, name: CharSequence, maximized: Boolean = false, focused: Boolean = true) {
         if (windowId != NULL)
             throw IllegalStateException("Multiple windows are not supported")
 
@@ -42,6 +42,8 @@ object GameWindow : NativeResource {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3)
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2)
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE)
+        glfwWindowHint(GLFW_MAXIMIZED, if (maximized) GLFW_TRUE else GLFW_FALSE)
+        glfwWindowHint(GLFW_FOCUS_ON_SHOW, if (focused) GLFW_TRUE else GLFW_FALSE)
 
         windowId = glfwCreateWindow(width, height, name, NULL, NULL)
         if (windowId == NULL)
