@@ -1,5 +1,6 @@
 package com.zerra.client.render
 
+import com.zerra.client.util.HardwareConstraints
 import org.lwjgl.opengl.GL33C.*
 import kotlin.math.sin
 
@@ -25,6 +26,8 @@ fun main() {
 
     glEnable(GL_CULL_FACE)
     glCullFace(GL_BACK)
+
+    println("Max Texture Size: ${HardwareConstraints.maxTextureSize}")
 
     var a = 0
     while (!GameWindow.closeRequested) {
