@@ -1,7 +1,6 @@
 package com.zerra.common
 
 import com.zerra.common.network.Side
-import com.zerra.common.util.Phased
 
 /**
  * Common game class for both client and server side instances.
@@ -9,7 +8,7 @@ import com.zerra.common.util.Phased
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-abstract class Zerra: Phased {
+abstract class Zerra {
 
     /**
      * Stores the side within the current thread. When this variable is set during the initialization of the

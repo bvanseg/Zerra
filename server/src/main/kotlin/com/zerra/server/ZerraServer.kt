@@ -25,8 +25,4 @@ class ZerraServer: Zerra() {
     }
 
     override fun update() = TODO("Not yet implemented")
-
-    override fun preInit() = TODO("Not yet implemented")
-    override fun init() = TODO("Not yet implemented")
-    override fun postInit() = TODO("Not yet implemented")
 }

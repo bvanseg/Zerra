@@ -34,11 +34,6 @@ class ZerraClient private constructor(): Zerra() {
 
         // create context
         // TODO
-
-        // fire phases
-        preInit()
-        init()
-        postInit()
     }
 
     fun render() {
@@ -46,8 +41,4 @@ class ZerraClient private constructor(): Zerra() {
     }
 
     override fun update() = TODO("Not yet implemented")
-
-    override fun preInit() = TODO("Not yet implemented")
-    override fun init() = TODO("Not yet implemented")
-    override fun postInit() = TODO("Not yet implemented")
 }
