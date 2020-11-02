@@ -30,5 +30,7 @@ open class ResourceManager(val root: String, private val domain: String) {
 
     fun getResourceAtLocation(location: String): ResourceLocation = ResourceLocation(this, domain, location)
 
+    fun resourceExists(location: String): Boolean = !resources.getResourcesWithPath("$root$domain/$location").isEmpty()
+
     private fun close() = scanInitialized.ifTrue { resources.close() }
 }
