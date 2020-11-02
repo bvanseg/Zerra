@@ -21,8 +21,8 @@ data class ResourceLocation(val resourceManager: ResourceManager, val domain: St
 
     private val resource by lazy { resourceManager.resources.getResourcesWithPath(path)?.firstOrNull() }
 
-    private val inputStream: InputStream? by lazy { if(resource != null) resource!!.open() else null }
-    private val file: File? by lazy { if(resource != null) resource!!.classpathElementFile else null }
+    val inputStream: InputStream? by lazy { if(resource != null) resource!!.open() else null }
+    val file: File? by lazy { if(resource != null) resource!!.classpathElementFile else null }
 
     override fun close() {
         inputStream?.close()
