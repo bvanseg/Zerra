@@ -49,7 +49,8 @@ class ZerraClient private constructor(): Zerra() {
 
     fun initClient() {
         // Create window
-        val window = GameWindow(1920, 1080)
+        GameWindow.init()
+        GameWindow.create(1920, 1080, "Zerra")
 
         // create context
         // TODO
