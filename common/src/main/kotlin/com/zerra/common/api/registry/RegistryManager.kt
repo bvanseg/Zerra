@@ -19,10 +19,7 @@ abstract class RegistryManager {
 
     val registries = hashMapOf<KClass<*>, Registry<*>>()
 
-    val REALM_REGISTRY = addRegistry<Realm> { entry ->
-        createNewInstance(entry.value.java, arrayOf(Long::class.java), entry.id)
-    }
-
+    val REALM_REGISTRY = addRegistry<Realm>()
     val ENTITY_REGISTRY = addRegistry<Entity>()
 
     inline fun <reified T : Any> addRegistry(noinline factory: (RegistryEntry<T>) -> T? = { entry ->

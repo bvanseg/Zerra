@@ -2,7 +2,11 @@ package com.zerra.common.realm
 
 import com.zerra.common.entity.EntityManager
 
-class Realm(val id: Long) {
+/**
+ * @author Boston Vanseghi
+ * @since 0.0.1
+ */
+class Realm {
 
     var ticksExisted: Long = 0
     val entityManager = EntityManager(this)

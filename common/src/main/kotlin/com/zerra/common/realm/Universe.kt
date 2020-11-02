@@ -13,7 +13,7 @@ class Universe {
 
     fun update() {
         realmManager.loadedRealms.forEach {
-            it.value.update()
+            it.update()
         }
         ticksExisted++
     }
