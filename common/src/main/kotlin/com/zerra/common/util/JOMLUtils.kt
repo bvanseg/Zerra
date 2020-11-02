@@ -35,16 +35,6 @@ operator fun Matrix4f.minusAssign(other: Vector3fc) {
     this.translate(-other)
 }
 
-operator fun Matrix4fc.get(col: Int, row: Int): Float = this.get(col, row)
-operator fun Matrix4f.set(col: Int, row: Int, value: Float) {
-    this.set(col, row, value)
-}
-
-operator fun Vector3fc.get(index: Int): Float = this.get(index)
-operator fun Vector3f.set(index: Int, value: Float) {
-    this.setComponent(index, value)
-}
-
 operator fun Vector3fc.unaryMinus(): Vector3f = this.mul(-1f, -1f, -1f, Vector3f())
 
 @Suppress("UNCHECKED_CAST")
