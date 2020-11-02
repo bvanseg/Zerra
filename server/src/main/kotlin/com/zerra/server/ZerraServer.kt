@@ -44,7 +44,7 @@ class ZerraServer: Zerra() {
 
     override fun init() {
         logger.info("Starting up ZerraServer")
-        ServerRegistryManager.ENTITY_REGISTRY.register(ServerEntityPlayer::class, "server.entity.player")
+        ServerRegistryManager.ENTITY_REGISTRY.register(ServerEntityPlayer::class)
 
         initServer()
 

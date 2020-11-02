@@ -42,7 +42,7 @@ class ZerraClient private constructor(): Zerra() {
 
     override fun init() {
         logger.info("Starting up ZerraClient")
-        ClientRegistryManager.ENTITY_REGISTRY.register(ClientEntityPlayer::class, "client.entity.player")
+        ClientRegistryManager.ENTITY_REGISTRY.register(ClientEntityPlayer::class)
 
         initClient()
     }

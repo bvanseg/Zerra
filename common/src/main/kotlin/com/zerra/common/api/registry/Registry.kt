@@ -16,8 +16,8 @@ class Registry<T : Any>(val factory: (RegistryEntry<T>) -> T?) {
 
     private val logger = getLogger()
 
-    fun register(value: KClass<out T>, unlocalizedName: String) {
-        val entry = RegistryEntry(this, value, unlocalizedName)
+    fun register(value: KClass<out T>) {
+        val entry = RegistryEntry(this, value)
 
         if(classEntries.contains(entry)) {
             throw IllegalStateException("Attempted to register an entry that already exists: $value")

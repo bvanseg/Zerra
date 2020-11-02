@@ -31,7 +31,7 @@ abstract class RegistryManager {
         return newRegistry
     }
 
-    fun init() {
-        ENTITY_REGISTRY.register(EntityPlayer::class, "entity.player")
+    open fun init() {
+        ENTITY_REGISTRY.register(EntityPlayer::class)
     }
 }
