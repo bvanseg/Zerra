@@ -3,6 +3,8 @@ package com.zerra.common.entity
 import java.util.*
 
 /**
+ * Represents the core of an entity within the world.
+ *
  * @author Boston Vanseghi
  * @since 0.0.1
  */
