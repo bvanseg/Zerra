@@ -17,8 +17,10 @@ abstract class RegistryManager {
 
     val registries = hashMapOf<KClass<*>, Registry<*, *>>()
 
-    val REALM_REGISTRY = addInstanceRegistry<KClass<out Realm>, Realm>()
+    val REALM_REGISTRY = addClassInstanceRegistry<Realm>()
     val ENTITY_REGISTRY = addFactoryRegistry<Entity>()
+
+    inline fun <reified V : Any> addClassInstanceRegistry(): InstanceRegistry<KClass<out V>, V> = addInstanceRegistry()
 
     inline fun <reified K, reified V : Any> addInstanceRegistry(): InstanceRegistry<K, V> {
         logger.info("Creating new registry for object of type: ${V::class}")
