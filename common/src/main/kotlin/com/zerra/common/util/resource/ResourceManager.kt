@@ -28,7 +28,7 @@ open class ResourceManager(val root: String, private val domain: String) {
         logger.info("Scan finished.")
     }
 
-    fun getResourceAtLocation(location: String): ResourceLocation = ResourceLocation(this, "$root$domain", location)
+    fun getResourceAtLocation(location: String): ResourceLocation = ResourceLocation(this, domain, location)
 
     private fun close() = scanInitialized.ifTrue { resources.close() }
 }
