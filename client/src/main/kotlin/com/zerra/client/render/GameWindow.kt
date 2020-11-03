@@ -70,7 +70,7 @@ object GameWindow : NativeResource {
         }
 
         glfwMakeContextCurrent(windowId)
-        glfwShowWindow(windowId)
+        GL.createCapabilities()
 
         // Add listeners
         glfwSetWindowCloseCallback(windowId) {
@@ -86,7 +86,7 @@ object GameWindow : NativeResource {
             glViewport(0, 0, w, h)
         }
 
-        GL.createCapabilities()
+        glfwShowWindow(windowId)
     }
 
     fun update() {

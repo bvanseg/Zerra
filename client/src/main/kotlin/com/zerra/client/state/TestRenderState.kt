@@ -1,9 +1,13 @@
 package com.zerra.client.state
 
+import com.zerra.client.render.GameWindow
 import com.zerra.client.shader.Shader
+import com.zerra.common.util.TransformationHelper
 import com.zerra.common.util.resource.ResourceLocation
 import com.zerra.common.util.resource.ResourceManager
+import org.joml.Matrix4f
 import org.lwjgl.opengl.GL33C.*
+import kotlin.math.sin
 
 class TestRenderState(resourceManager: ResourceManager) : ClientState {
 
@@ -15,6 +19,7 @@ class TestRenderState(resourceManager: ResourceManager) : ClientState {
 
     override fun render() {
         testShader.bind()
+        testShader.loadMatrix4f("transformation", TransformationHelper.get().translate(0f, 0f, -2f).rotate(test.toDouble(), 0f, 1f, 0f).value())
         glBindVertexArray(vao)
         glEnableVertexAttribArray(0)
         glEnableVertexAttribArray(1)
@@ -27,6 +32,10 @@ class TestRenderState(resourceManager: ResourceManager) : ClientState {
 
     override fun init() {
         testShader.load()
+        testShader.bind()
+        testShader.loadMatrix4f("projection", Matrix4f().perspective(45f, GameWindow.framebufferWidth.toFloat() / GameWindow.framebufferHeight.toFloat(), 0.3f, 10000.0f))
+        testShader.loadMatrix4f("transformation", TransformationHelper.get().translate(0f, 0f, -1f).value())
+        Shader.unbind()
 
         vao = glGenVertexArrays()
         vbo1 = glGenBuffers()
@@ -45,8 +54,8 @@ class TestRenderState(resourceManager: ResourceManager) : ClientState {
 
         glBindVertexArray(0)
 
-        glEnable(GL_CULL_FACE)
-        glCullFace(GL_BACK)
+//        glEnable(GL_CULL_FACE)
+//        glCullFace(GL_BACK)
         glClearColor(1f, 1f, 1f, 1f)
     }
 

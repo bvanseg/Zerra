@@ -19,7 +19,7 @@ fun main() {
         delta += (now - lastTime).toDouble() / nsPerTick.toDouble()
         lastTime = now
 
-        while (delta > 0) { // FIXME temporary update loop
+        while (delta >= 1) { // FIXME temporary update loop
             client.update()
             delta--
         }

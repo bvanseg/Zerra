@@ -29,8 +29,8 @@ class TransformationHelper {
         return this
     }
 
-    fun translate(x: Number, y: Number, z: Number): TransformationHelper {
-        matrix4f.translate(x.toFloat(), y.toFloat(), z.toFloat())
+    fun translate(x: Float, y: Float, z: Float): TransformationHelper {
+        matrix4f.translate(x, y, z)
         return this
     }
 

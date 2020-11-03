@@ -1,6 +1,7 @@
 package com.zerra.client.shader
 
 import bvanseg.kotlincommons.any.getLogger
+import bvanseg.kotlincommons.stream.stream
 import com.zerra.common.util.resource.ResourceLocation
 import org.joml.*
 import org.lwjgl.opengl.GL20C
@@ -84,7 +85,7 @@ class Shader(private val name: ResourceLocation) : NativeResource {
             throw IllegalStateException("Shader has not been loaded")
 
         try {
-            for (type in types) {
+            for (type in types.stream().distinct()) {
                 val shader = shaders[type.ordinal]
                 if (shader != 0) {
                     glDetachShader(program, shader)
