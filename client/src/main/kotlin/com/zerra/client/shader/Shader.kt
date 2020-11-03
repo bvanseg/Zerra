@@ -2,6 +2,7 @@ package com.zerra.client.shader
 
 import bvanseg.kotlincommons.any.getLogger
 import bvanseg.kotlincommons.stream.stream
+import com.zerra.client.util.Bindable
 import com.zerra.common.util.resource.ResourceLocation
 import org.joml.*
 import org.lwjgl.opengl.GL20C
@@ -16,7 +17,7 @@ import kotlin.collections.HashMap
  * @author Ocelot5836
  * @since 0.0.1
  */
-class Shader internal constructor(private val name: ResourceLocation) : NativeResource {
+class Shader internal constructor(private val name: ResourceLocation) : Bindable, NativeResource {
 
     private var program = 0
     private val shaders = IntArray(ShaderType.values().size)
@@ -109,8 +110,12 @@ class Shader internal constructor(private val name: ResourceLocation) : NativeRe
         }
     }
 
-    fun bind() {
+    override fun bind() {
         glUseProgram(program)
+    }
+
+    override fun unbind() {
+        glUseProgram(0)
     }
 
     override fun free() {
@@ -208,10 +213,6 @@ class Shader internal constructor(private val name: ResourceLocation) : NativeRe
 
                 out.toString(Charsets.UTF_8)
             }.getOrNull()
-        }
-
-        fun unbind() {
-            glUseProgram(0)
         }
     }
 }
