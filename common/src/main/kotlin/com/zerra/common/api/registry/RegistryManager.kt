@@ -15,6 +15,8 @@ abstract class RegistryManager {
 
     val logger = getLogger()
 
+    private var hasInitialized = false
+
     @PublishedApi
     internal val registries = hashMapOf<KClass<*>, Registry<*, *>>()
 
@@ -40,8 +42,14 @@ abstract class RegistryManager {
     }
 
     open fun init() {
+        if (hasInitialized) {
+            throw Exception("Failed to initialize RegistryManager: RegistryManager has already been initialized!")
+        }
+
         logger.info("Initializing registry manager")
         ENTITY_REGISTRY.register(EntityPlayer::class)
+
+        hasInitialized = true
     }
 
     inline fun <reified T: Any> getFactoryRegistry() = registries[T::class] as FactoryRegistry<T>? ?: throw IllegalStateException("Attempted to get a registry that does not exist: ${T::class}")
