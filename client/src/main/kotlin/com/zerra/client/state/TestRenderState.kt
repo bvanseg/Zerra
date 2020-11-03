@@ -20,20 +20,20 @@ class TestRenderState(resourceManager: ResourceManager) : ClientState {
     override fun render() {
         testShader.bind()
         testShader.loadMatrix4f("transformation", TransformationHelper.get().translate(0f, 0f, -2f).rotate(test.toDouble(), 0f, 1f, 0f).value())
-//        glBindVertexArray(vao)
-//        glEnableVertexAttribArray(0)
-//        glEnableVertexAttribArray(1)
-//        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0)
-//        glDisableVertexAttribArray(1)
-//        glDisableVertexAttribArray(0)
-//        glBindVertexArray(0)
+        glBindVertexArray(vao)
+        glEnableVertexAttribArray(0)
+        glEnableVertexAttribArray(1)
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0)
+        glDisableVertexAttribArray(1)
+        glDisableVertexAttribArray(0)
+        glBindVertexArray(0)
 
-        VertexBuilder.reset().segment(GL_FLOAT, 2)
-        VertexBuilder.put(-0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, -0.5f)
-        VertexBuilder.segment(GL_FLOAT, 3)
-        VertexBuilder.put(0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f)
-        VertexBuilder.indices(2, 1, 0, 3, 2, 0)
-        VertexBuilder.render(6)
+//        VertexBuilder.reset().segment(GL_FLOAT, 2)
+//        VertexBuilder.put(-0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, -0.5f)
+//        VertexBuilder.segment(GL_FLOAT, 3)
+//        VertexBuilder.put(0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f)
+//        VertexBuilder.indices(2, 1, 0, 3, 2, 0)
+//        VertexBuilder.render(6)
 
         Shader.unbind()
     }
@@ -49,18 +49,25 @@ class TestRenderState(resourceManager: ResourceManager) : ClientState {
         vbo1 = glGenBuffers()
         vbo2 = glGenBuffers()
 
-        glBindVertexArray(vao)
+//        glBindVertexArray(vao)
+//
+//        glBindBuffer(GL_ARRAY_BUFFER, vbo1)
+//        glBufferData(GL_ARRAY_BUFFER, floatArrayOf(-0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f), GL_DYNAMIC_DRAW)
+//        glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0L)
+//        glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 8L * Float.SIZE_BYTES)
+//        glBindBuffer(GL_ARRAY_BUFFER, 0)
+//
+//        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo2)
+//        glBufferData(GL_ELEMENT_ARRAY_BUFFER, shortArrayOf(2, 1, 0, 3, 2, 0), GL_STATIC_DRAW)
+//
+//        glBindVertexArray(0)
 
-        glBindBuffer(GL_ARRAY_BUFFER, vbo1)
-        glBufferData(GL_ARRAY_BUFFER, floatArrayOf(-0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f), GL_DYNAMIC_DRAW)
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0L)
-        glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 8L * Float.SIZE_BYTES)
-        glBindBuffer(GL_ARRAY_BUFFER, 0)
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo2)
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, shortArrayOf(2, 1, 0, 3, 2, 0), GL_STATIC_DRAW)
-
-        glBindVertexArray(0)
+        VertexBuilder.reset().segment(GL_FLOAT, 2)
+        VertexBuilder.put(-0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, -0.5f)
+        VertexBuilder.segment(GL_FLOAT, 3)
+        VertexBuilder.put(0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f)
+        VertexBuilder.indices(2, 1, 0, 3, 2, 0)
+        VertexBuilder.copy(vao, vbo1, vbo2)
 
 //        glEnable(GL_CULL_FACE)
 //        glCullFace(GL_BACK)

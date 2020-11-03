@@ -57,6 +57,7 @@ class ZerraClient private constructor() : Zerra() {
         // Create window
         GameWindow.init()
         GameWindow.create(1280, 720, "Zerra")
+        GameWindow.setVsync(true)
     }
 
     override fun cleanup() {
