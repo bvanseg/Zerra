@@ -31,12 +31,7 @@ data class ResourceLocation(val resourceManager: ResourceManager, val domain: St
         inputStream?.close()
     }
 
-    override fun toString(): String = ToStringBuilder.builder(this)
-        .append("root", resourceManager.root)
-        .append("domain", domain)
-        .append("location", location)
-        .append("path", path)
-        .toString()
+    override fun toString(): String = path
 
     override fun hashCode(): Int = HashCodeBuilder(this).append(path).hashCode()
     override fun equals(other: Any?): Boolean = other is ResourceLocation && this.domain == other.domain && this.location == other.location

@@ -1,21 +1,22 @@
 package com.zerra.client
 
 import bvanseg.kotlincommons.any.getLogger
-import com.zerra.client.entity.ClientEntityPlayer
 import com.zerra.client.render.GameWindow
+import com.zerra.client.shader.Shader
+import com.zerra.client.state.ClientGameState
 import com.zerra.client.state.ClientState
 import com.zerra.client.state.ClientStateManager
-import com.zerra.client.state.ClientGameState
-import com.zerra.common.api.registry.RegistryManager
 import com.zerra.common.Zerra
 import com.zerra.common.api.state.StateManager
 import com.zerra.common.network.Side
+import com.zerra.common.util.resource.ResourceLocation
+import org.lwjgl.system.NativeResource
 
 /**
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-class ZerraClient private constructor(): Zerra() {
+class ZerraClient private constructor() : Zerra(), NativeResource {
 
     companion object {
         private var instance: ZerraClient? = null
@@ -26,7 +27,7 @@ class ZerraClient private constructor(): Zerra() {
          * Gets a client-sided instance of Zerra.
          */
         fun getInstance(): ZerraClient {
-            if(instance == null) {
+            if (instance == null) {
                 logger.info("Creating ZerraClient instance")
                 instance = ZerraClient()
                 zerraInstance = instance
@@ -40,6 +41,8 @@ class ZerraClient private constructor(): Zerra() {
         localSide.set(Side.CLIENT)
     }
 
+    val testShader: Shader = Shader(ResourceLocation(getResourceManager(), "zerra", "test"))
+
     override fun init() {
         super.init()
 
@@ -51,11 +54,17 @@ class ZerraClient private constructor(): Zerra() {
         // Create window
         GameWindow.init()
         GameWindow.create(1920, 1080, "Zerra")
+
+        testShader.load()
+    }
+
+    override fun free() {
+        testShader.free()
     }
 
     fun render() {
         val state = ClientStateManager.activeState
-        if(state is ClientState) {
+        if (state is ClientState) {
             state.render()
         }
     }
