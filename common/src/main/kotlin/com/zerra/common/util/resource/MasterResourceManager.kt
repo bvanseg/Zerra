@@ -16,11 +16,11 @@ object MasterResourceManager: ResourceManager("/", "master") {
 
     lateinit var resources: ScanResult
 
-    fun scanResources(forceScan: Boolean = false) {
+    fun scanResources(forceScan: Boolean = false, classGraphSupplier: ClassGraph? = null) {
         logger.info("Scanning all resources...")
         if (!scanInitialized || forceScan) {
             scanInitialized = true
-            resources = ClassGraph().enableAllInfo().scan()
+            resources = (classGraphSupplier ?: ClassGraph().enableAllInfo()).scan()
         }
         logger.info("Scan finished.")
     }

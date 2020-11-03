@@ -1,4 +1,4 @@
 package com.zerra.common.util
 
-abstract class ZerraException(override val message: String): Exception(message)
-class ModLoadException(override val message: String): ZerraException(message)
+abstract class ZerraException(message: String, nested: Exception? = null): Exception(message, nested)
+class ModLoadException(message: String, nested: Exception? = null): ZerraException(message, nested)

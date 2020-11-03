@@ -1,5 +1,6 @@
 package com.zerra.common
 
+import com.zerra.common.api.mod.ModLoader
 import com.zerra.common.api.registry.RegistryManager
 import com.zerra.common.api.state.StateManager
 import com.zerra.common.network.Side
@@ -39,7 +40,7 @@ abstract class Zerra {
     fun getSide(): Side = localSide.get()
 
     open fun init() {
-        MasterResourceManager.scanResources()
+        ModLoader.loadAllMods()
         this.getRegistryManager().init()
     }
 

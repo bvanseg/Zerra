@@ -23,32 +23,27 @@ object ModLoader {
 
     val EVENT_BUS = EventBus()
 
-    val mods = mutableMapOf<String, Mod>()
+    val mods = mutableMapOf<String, Any>()
 
     private var hasLoaded = false
 
-    /**
-     * Loads all mods onto the classpath.
-     */
-    internal fun loadMods() {
+    fun loadAllMods() {
+        injectMods()
+        findAndLoadMods()
+    }
+
+    private fun findAndLoadMods() {
         if (hasLoaded) {
             throw IllegalStateException("Attempted to load mods when mods have already been loaded!")
         }
 
         MasterResourceManager.resources.apply {
             logger.debug("Loading mod instances...")
-            getClassesImplementing(Mod::class.jvmName).loadClasses().forEach { modClass ->
+            val start = System.currentTimeMillis()
+            getClassesWithAnnotation(Mod::class.jvmName).loadClasses().forEach { modClass ->
                 loadMod(modClass)
             }
-            logger.debug("Finished loading ${mods.size} mods")
-
-//            logger.debug("Loading ${configAnnotationKClass.qualifiedName} annotated classes...")
-//            getClassesWithAnnotation(configAnnotationClass.name).forEach { loadConfigClass(it) }
-//            logger.debug("Finished loading ${configAnnotationKClass.simpleName} classes for mods")
-//
-//            logger.debug("Loading ${registerAnnotationKClass.qualifiedName} annotated classes...")
-//            getClassesWithAnnotation(registerAnnotationClass.name).forEach { loadRegisterClass(it) }
-//            logger.debug("Finished loading ${registerAnnotationKClass.simpleName} classes for mods")
+            logger.debug("Finished loading ${mods.size} mods in ${System.currentTimeMillis() - start}ms")
         }
         hasLoaded = true
     }
@@ -56,9 +51,16 @@ object ModLoader {
     private fun loadMod(modClass: Class<*>) = try {
         logger.trace("Trying to load mod class ${modClass.name}")
 
-        val mod = createNewInstance(modClass) as Mod?
-                ?: throw ModLoadException("Failed to load mod for class $modClass")
-        val domain = mod.domain
+        val mod = try {
+            createNewInstance(modClass)
+        } catch(e: NoSuchMethodException) {
+            throw ModLoadException("Failed to construct mod class instance for $modClass. Make sure you have a no-arg constructor!", e)
+        } catch(e: UninitializedPropertyAccessException) {
+            throw ModLoadException("Failed to construct mod class instance for $modClass. Make sure you have a no-arg constructor!", e)
+        } ?: throw ModLoadException("Failed to load mod for class $modClass")
+
+        val metadata = modClass.getAnnotation(Mod::class.java)
+        val domain = metadata.domain
 
         if (domain.equals("zerra", true) && mod !is ZerraMod) {
             throw ModLoadException("The domain name '$domain' is the same as the game's domain")
@@ -73,16 +75,30 @@ object ModLoader {
         logger.error("Error trying to load mod class ${modClass.name}", e)
     }
 
+    /**
+     * Loads all mods onto the classpath from their respective JARs.
+     */
     internal fun injectMods() {
+        logger.info("Beginning mod injection")
+        val start = System.currentTimeMillis()
         val mods = FileManager.getModJARs()
 
-        val classGraph = ClassGraph().enableClassInfo()
+        val classGraph = ClassGraph().enableAllInfo()
 
-        val urls = mods.filter(Files::isRegularFile).map { it.toFile().toURI().toURL() }.toArray() as Array<out URL>
-        classGraph.addClassLoader(URLClassLoader(urls, this::class.java.classLoader))
+        val urls = mutableListOf<URL>()
 
-        val results = classGraph.scan()
+        mods.filter(Files::isRegularFile).forEach {
+            val file = it.toFile()
+            if (file.extension.toLowerCase() == "jar") {
+                logger.info("Found potential mod JAR $it")
+                urls.add(file.toURI().toURL())
+            }
+        }
 
-        // TODO
+        classGraph.addClassLoader(URLClassLoader(urls.toTypedArray(), this::class.java.classLoader))
+
+        // Scan the resources after performing the injection.
+        MasterResourceManager.scanResources(true, classGraph)
+        logger.info("Finished mod injection in ${System.currentTimeMillis() - start}ms")
     }
 }
