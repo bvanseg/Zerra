@@ -7,7 +7,6 @@ import com.zerra.common.util.resource.ResourceLocation
 import com.zerra.common.util.resource.ResourceManager
 import org.joml.Matrix4f
 import org.lwjgl.opengl.GL33C.*
-import kotlin.math.sin
 
 class TestRenderState(resourceManager: ResourceManager) : ClientState {
 

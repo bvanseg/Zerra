@@ -1,6 +1,5 @@
 package com.zerra.common.util.resource
 
-import bvanseg.kotlincommons.any.getLogger
 import bvanseg.kotlincommons.bool.ifTrue
 import io.github.classgraph.ClassGraph
 import io.github.classgraph.ScanResult

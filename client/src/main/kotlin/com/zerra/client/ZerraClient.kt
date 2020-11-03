@@ -9,7 +9,6 @@ import com.zerra.common.Zerra
 import com.zerra.common.api.state.StateManager
 import com.zerra.common.network.Side
 import org.lwjgl.opengl.GL33C
-import org.lwjgl.system.NativeResource
 
 /**
  * @author Boston Vanseghi
