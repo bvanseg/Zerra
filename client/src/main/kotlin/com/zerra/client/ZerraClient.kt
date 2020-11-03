@@ -15,7 +15,7 @@ import org.lwjgl.system.NativeResource
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-class ZerraClient private constructor() : Zerra(), NativeResource {
+class ZerraClient private constructor() : Zerra() {
 
     companion object {
         private var instance: ZerraClient? = null
@@ -53,7 +53,7 @@ class ZerraClient private constructor() : Zerra(), NativeResource {
         GameWindow.create(1280, 720, "Zerra")
     }
 
-    override fun free() {
+    override fun cleanup() {
         ClientStateManager.activeState.dispose()
     }
 

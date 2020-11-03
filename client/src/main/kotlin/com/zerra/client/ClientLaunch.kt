@@ -27,4 +27,6 @@ fun main() {
         client.render()
         GameWindow.update()
     }
+
+    client.cleanup()
 }

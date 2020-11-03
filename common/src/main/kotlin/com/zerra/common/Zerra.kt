@@ -53,4 +53,6 @@ abstract class Zerra {
 
     abstract fun getStateManager(): StateManager
     abstract fun getRegistryManager(): RegistryManager
+
+    abstract fun cleanup()
 }

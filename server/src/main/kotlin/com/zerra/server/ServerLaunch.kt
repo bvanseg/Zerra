@@ -4,4 +4,5 @@ fun main() {
     val server = ZerraServer.getInstance()
     server.init()
     server.createGame()
+    server.cleanup()
 }

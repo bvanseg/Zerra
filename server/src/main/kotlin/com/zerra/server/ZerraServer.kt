@@ -15,7 +15,7 @@ import com.zerra.server.state.ServerStateManager
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-class ZerraServer: Zerra() {
+class ZerraServer private constructor(): Zerra() {
 
     companion object {
         private var instance: ZerraServer? = null
@@ -68,4 +68,8 @@ class ZerraServer: Zerra() {
 
     override fun getStateManager(): StateManager = ServerStateManager
     override fun getRegistryManager(): RegistryManager = ServerRegistryManager
+
+    override fun cleanup() {
+        // TODO
+    }
 }
