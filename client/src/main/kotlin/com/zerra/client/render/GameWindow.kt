@@ -5,6 +5,7 @@ import org.lwjgl.glfw.Callbacks.glfwFreeCallbacks
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.opengl.GL
+import org.lwjgl.opengl.GL11C.GL_TRUE
 import org.lwjgl.opengl.GL11C.glViewport
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil.NULL
@@ -30,6 +31,8 @@ object GameWindow : NativeResource {
         private set
     var framebufferHeight = 0
         private set
+    var title: CharSequence = ""
+        private set
 
     fun init() {
         logger.info("Initializing GLFW")
@@ -38,19 +41,23 @@ object GameWindow : NativeResource {
             throw RuntimeException("Failed to initialize GLFW")
     }
 
-    fun create(width: Int, height: Int, name: CharSequence, maximized: Boolean = false, focused: Boolean = true) {
+    fun create(width: Int, height: Int, title: CharSequence, maximized: Boolean = false, focused: Boolean = true) {
+        this.title = title
+
         logger.info("Creating game window")
         if (windowId != NULL)
             throw IllegalStateException("Multiple windows are not supported")
 
         // Create window
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3)
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2)
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3)
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE)
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE)
         glfwWindowHint(GLFW_MAXIMIZED, if (maximized) GLFW_TRUE else GLFW_FALSE)
         glfwWindowHint(GLFW_FOCUS_ON_SHOW, if (focused) GLFW_TRUE else GLFW_FALSE)
 
-        windowId = glfwCreateWindow(width, height, name, NULL, NULL)
+        windowId = glfwCreateWindow(width, height, title, NULL, NULL)
         if (windowId == NULL)
             throw IllegalStateException("Failed to create GLFW Window")
 
@@ -101,6 +108,18 @@ object GameWindow : NativeResource {
         glfwFreeCallbacks(windowId)
         glfwDestroyWindow(windowId)
         windowId = NULL
+    }
+
+    fun setTitle(title: CharSequence) {
+        if (windowId == NULL)
+            return
+
+        this.title = title
+        glfwSetWindowTitle(windowId, title)
+    }
+
+    fun setVsync(enabled: Boolean) {
+        glfwSwapInterval(if (enabled) 1 else 0)
     }
 
     override fun free() {

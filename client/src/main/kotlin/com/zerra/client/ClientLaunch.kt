@@ -12,8 +12,15 @@ fun main() {
     var lastTime = System.nanoTime()
     var delta = 0.0
 
+    var loopStart: Long
+    var loopTime = 0L
+
+    val title = GameWindow.title
+
     while (!GameWindow.closeRequested) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+
+        loopStart = System.nanoTime()
 
         val now = System.nanoTime()
         delta += (now - lastTime).toDouble() / nsPerTick.toDouble()
@@ -25,10 +32,14 @@ fun main() {
         while (delta >= 1) { // FIXME temporary update loop
             client.update()
             delta--
+            if (loopTime > 0)
+                GameWindow.setTitle("$title | ${1000000000 / loopTime} FPS | ${loopTime}ns")
         }
 
         client.render()
         GameWindow.update()
+
+        loopTime = System.nanoTime() - loopStart
     }
 
     client.cleanup()
