@@ -8,7 +8,7 @@ import bvanseg.kotlincommons.any.getLogger
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-open class ResourceManager(val root: String, private val domain: String) {
+open class ResourceManager(val root: String, val domain: String) {
 
     val logger = getLogger()
 
