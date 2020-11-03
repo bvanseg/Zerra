@@ -8,7 +8,6 @@ import com.zerra.common.util.resource.ResourceLocation
 import com.zerra.common.util.resource.ResourceManager
 import org.joml.Matrix4f
 import org.lwjgl.opengl.GL33C.*
-import kotlin.math.sin
 
 class TestRenderState(resourceManager: ResourceManager) : ClientState {
 
@@ -18,10 +17,10 @@ class TestRenderState(resourceManager: ResourceManager) : ClientState {
     private var vbo2 = 0
     private var test = 0
 
-    override fun render() {
+    override fun render(partialTicks: Float) {
         testShader.use {
             testShader.loadMatrix4f("projection", Matrix4f().perspective(45f, GameWindow.framebufferWidth.toFloat() / GameWindow.framebufferHeight.toFloat(), 0.3f, 10000.0f))
-            testShader.loadMatrix4f("transformation", TransformationHelper.get().translate(0f, 0f, -2f).rotate(test.toDouble(), 0f, 1f, 0f).value())
+            testShader.loadMatrix4f("transformation", TransformationHelper.get().translate(0f, 0f, -2f).rotate((test + partialTicks).toDouble(), 0f, 1f, 0f).value())
 
             glBindVertexArray(vao)
             glEnableVertexAttribArray(0)
