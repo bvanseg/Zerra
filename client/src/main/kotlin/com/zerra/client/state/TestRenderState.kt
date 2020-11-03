@@ -8,6 +8,7 @@ import com.zerra.common.util.resource.ResourceLocation
 import com.zerra.common.util.resource.ResourceManager
 import org.joml.Matrix4f
 import org.lwjgl.opengl.GL33C.*
+import kotlin.math.sin
 
 class TestRenderState(resourceManager: ResourceManager) : ClientState {
 
@@ -18,32 +19,22 @@ class TestRenderState(resourceManager: ResourceManager) : ClientState {
     private var test = 0
 
     override fun render() {
-        testShader.bind()
-        testShader.loadMatrix4f("transformation", TransformationHelper.get().translate(0f, 0f, -2f).rotate(test.toDouble(), 0f, 1f, 0f).value())
-        glBindVertexArray(vao)
-        glEnableVertexAttribArray(0)
-        glEnableVertexAttribArray(1)
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0)
-        glDisableVertexAttribArray(1)
-        glDisableVertexAttribArray(0)
-        glBindVertexArray(0)
+        testShader.use {
+            testShader.loadMatrix4f("projection", Matrix4f().perspective(45f, GameWindow.framebufferWidth.toFloat() / GameWindow.framebufferHeight.toFloat(), 0.3f, 10000.0f))
+            testShader.loadMatrix4f("transformation", TransformationHelper.get().translate(0f, 0f, -2f).rotate(test.toDouble(), 0f, 1f, 0f).value())
 
-//        VertexBuilder.reset().segment(GL_FLOAT, 2)
-//        VertexBuilder.put(-0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, -0.5f)
-//        VertexBuilder.segment(GL_FLOAT, 3)
-//        VertexBuilder.put(0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f)
-//        VertexBuilder.indices(2, 1, 0, 3, 2, 0)
-//        VertexBuilder.render(6)
-
-        Shader.unbind()
+            glBindVertexArray(vao)
+            glEnableVertexAttribArray(0)
+            glEnableVertexAttribArray(1)
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0)
+            glDisableVertexAttribArray(1)
+            glDisableVertexAttribArray(0)
+            glBindVertexArray(0)
+        }
     }
 
     override fun init() {
         testShader.load()
-        testShader.bind()
-        testShader.loadMatrix4f("projection", Matrix4f().perspective(45f, GameWindow.framebufferWidth.toFloat() / GameWindow.framebufferHeight.toFloat(), 0.3f, 10000.0f))
-        testShader.loadMatrix4f("transformation", TransformationHelper.get().translate(0f, 0f, -1f).value())
-        Shader.unbind()
 
         vao = glGenVertexArrays()
         vbo1 = glGenBuffers()
@@ -76,14 +67,6 @@ class TestRenderState(resourceManager: ResourceManager) : ClientState {
 
     override fun update() {
         test++
-
-//        glBindBuffer(GL_ARRAY_BUFFER, vbo1)
-//        glBufferSubData(
-//            GL_ARRAY_BUFFER,
-//            0,
-//            floatArrayOf(sin(test.toDouble() / 60).toFloat() / 2f, sin(test.toDouble() / 60).toFloat() / 2f)
-//        )
-//        glBindBuffer(GL_ARRAY_BUFFER, 0)
     }
 
     override fun dispose() {
