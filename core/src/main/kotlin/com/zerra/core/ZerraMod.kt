@@ -1,12 +1,11 @@
 package com.zerra.core
 
-import com.zerra.client.ClientRegistryManager
-import com.zerra.common.Zerra
 import com.zerra.common.api.event.ModInitializationEvent
 import com.zerra.common.api.mod.Mod
 import com.zerra.common.api.mod.ModLoader
 import com.zerra.common.network.Side
-import com.zerra.server.ServerRegistryManager
+import com.zerra.core.client.ZerraClientRegistry
+import com.zerra.core.server.ZerraServerRegistry
 
 /**
  * @author Boston Vanseghi
@@ -21,8 +20,8 @@ internal object ZerraMod {
 
     private fun init(event: ModInitializationEvent) {
         when(event.side) {
-            Side.CLIENT -> ClientRegistryManager.init()
-            Side.SERVER -> ServerRegistryManager.init()
+            Side.CLIENT -> ZerraClientRegistry.init()
+            Side.SERVER -> ZerraServerRegistry.init()
         }
     }
 }
