@@ -5,4 +5,4 @@ package com.zerra.common.api.mod
  * @since 0.0.1
  */
 @Mod("zerra")
-object ZerraMod
+internal object ZerraMod
