@@ -1,5 +1,6 @@
 package com.zerra.common
 
+import com.zerra.common.api.event.ModInitializationEvent
 import com.zerra.common.api.mod.ModLoader
 import com.zerra.common.api.registry.RegistryManager
 import com.zerra.common.api.state.StateManager
@@ -42,6 +43,7 @@ abstract class Zerra {
     open fun init() {
         ModLoader.loadAllMods()
         this.getRegistryManager().init()
+        ModLoader.EVENT_BUS.fire(ModInitializationEvent(this.getRegistryManager(), this.getSide()))
     }
 
     abstract fun createGame()
