@@ -17,7 +17,7 @@ import kotlin.reflect.jvm.jvmName
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-object ModLoader {
+internal object ModLoader {
 
     val logger = getLogger()
 
