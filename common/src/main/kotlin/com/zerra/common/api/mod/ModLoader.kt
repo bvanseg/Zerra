@@ -78,7 +78,7 @@ internal object ModLoader {
     /**
      * Loads all mods onto the classpath from their respective JARs.
      */
-    internal fun injectMods() {
+    private fun injectMods() {
         logger.info("Beginning mod injection")
         val start = System.currentTimeMillis()
         val mods = FileManager.getModJARs()
