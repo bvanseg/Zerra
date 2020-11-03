@@ -1,7 +1,6 @@
 package com.zerra.common.api.registry
 
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.reflect.KClass
 
 /**
  * @author Boston Vanseghi
