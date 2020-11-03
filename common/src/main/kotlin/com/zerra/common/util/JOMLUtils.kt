@@ -1,9 +1,7 @@
 package com.zerra.common.util
 
-import org.joml.Matrix4f
-import org.joml.Matrix4fc
-import org.joml.Vector3f
-import org.joml.Vector3fc
+import org.joml.*
+import java.lang.Math
 
 operator fun Matrix4fc.times(other: Matrix4fc): Matrix4f = this.mul(other, Matrix4f())
 operator fun Matrix4f.timesAssign(other: Matrix4fc) {
@@ -52,3 +50,11 @@ fun main() {
 
     println(matrix4f)
 }
+
+fun Vector2ic.toArray(): IntArray = intArrayOf(this.x(), this.y())
+fun Vector2fc.toArray(): FloatArray = floatArrayOf(this.x(), this.y())
+fun Vector2dc.toArray(): DoubleArray = doubleArrayOf(this.x(), this.y())
+
+fun Vector3ic.toArray(): IntArray = intArrayOf(this.x(), this.y(), this.z())
+fun Vector3fc.toArray(): FloatArray = floatArrayOf(this.x(), this.y(), this.z())
+fun Vector3dc.toArray(): DoubleArray = doubleArrayOf(this.x(), this.y(), this.z())
