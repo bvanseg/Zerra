@@ -44,5 +44,8 @@ abstract class RegistryManager {
         ENTITY_REGISTRY.register(EntityPlayer::class)
     }
 
+    inline fun <reified T: Any> getFactoryRegistry() = registries[T::class] as FactoryRegistry<T>? ?: throw IllegalStateException("Attempted to get a registry that does not exist: ${T::class}")
+    inline fun <reified T: Any> getInstanceRegistry() = registries[T::class] as InstanceRegistry<*, T>? ?: throw IllegalStateException("Attempted to get a registry that does not exist: ${T::class}")
+    inline fun <reified T> getRegistry() = registries[T::class] ?: throw IllegalStateException("Attempted to get a registry that does not exist: ${T::class}")
     fun getRegistries(): Map<KClass<*>, Registry<*, *>> = registries
 }
