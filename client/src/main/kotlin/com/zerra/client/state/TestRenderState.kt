@@ -2,6 +2,7 @@ package com.zerra.client.state
 
 import com.zerra.client.render.GameWindow
 import com.zerra.client.shader.Shader
+import com.zerra.client.vertex.VertexBuilder
 import com.zerra.common.util.TransformationHelper
 import com.zerra.common.util.resource.ResourceLocation
 import com.zerra.common.util.resource.ResourceManager
@@ -19,13 +20,21 @@ class TestRenderState(resourceManager: ResourceManager) : ClientState {
     override fun render() {
         testShader.bind()
         testShader.loadMatrix4f("transformation", TransformationHelper.get().translate(0f, 0f, -2f).rotate(test.toDouble(), 0f, 1f, 0f).value())
-        glBindVertexArray(vao)
-        glEnableVertexAttribArray(0)
-        glEnableVertexAttribArray(1)
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0)
-        glDisableVertexAttribArray(1)
-        glDisableVertexAttribArray(0)
-        glBindVertexArray(0)
+//        glBindVertexArray(vao)
+//        glEnableVertexAttribArray(0)
+//        glEnableVertexAttribArray(1)
+//        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0)
+//        glDisableVertexAttribArray(1)
+//        glDisableVertexAttribArray(0)
+//        glBindVertexArray(0)
+
+        VertexBuilder.reset().segment(GL_FLOAT, 2)
+        VertexBuilder.put(-0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, -0.5f)
+        VertexBuilder.segment(GL_FLOAT, 3)
+        VertexBuilder.put(0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f)
+        VertexBuilder.indices(2, 1, 0, 3, 2, 0)
+        VertexBuilder.render(6)
+
         Shader.unbind()
     }
 

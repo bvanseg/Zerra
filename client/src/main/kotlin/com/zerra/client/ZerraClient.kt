@@ -5,6 +5,7 @@ import com.zerra.client.render.GameWindow
 import com.zerra.client.state.ClientState
 import com.zerra.client.state.ClientStateManager
 import com.zerra.client.state.TestRenderState
+import com.zerra.client.vertex.VertexBuilder
 import com.zerra.common.Zerra
 import com.zerra.common.api.state.StateManager
 import com.zerra.common.network.Side
@@ -20,6 +21,12 @@ class ZerraClient private constructor() : Zerra() {
         private var instance: ZerraClient? = null
 
         val logger = getLogger()
+
+        fun printOpenGLError() {
+            val error = GL33C.glGetError()
+            if (error != GL33C.GL_NO_ERROR)
+                logger.warn("OpenGL Error: 0x${Integer.toHexString(error)}")
+        }
 
         /**
          * Gets a client-sided instance of Zerra.
@@ -54,12 +61,11 @@ class ZerraClient private constructor() : Zerra() {
 
     override fun cleanup() {
         ClientStateManager.activeState.dispose()
+        VertexBuilder.free()
     }
 
     fun render() {
-        val error = GL33C.glGetError()
-        if (error != GL33C.GL_NO_ERROR)
-            logger.warn("OpenGL Error: 0x${Integer.toHexString(error)}")
+        printOpenGLError()
 
         val state = ClientStateManager.activeState
         if (state is ClientState) {
