@@ -5,6 +5,8 @@ import com.devsmart.ubjson.UBObject
 import com.devsmart.ubjson.UBReader
 import com.devsmart.ubjson.UBValueFactory
 import com.devsmart.ubjson.UBWriter
+import com.zerra.common.util.toArray
+import org.joml.*
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.math.BigInteger
@@ -59,6 +61,12 @@ class UBJ(initUBO: UBObject? = null) {
                 val uuid = value as UUID
                 UBValueFactory.createArray(longArrayOf(uuid.mostSignificantBits, uuid.leastSignificantBits))
             }
+            Vector2ic::class -> UBValueFactory.createArray((value as Vector2ic).toArray())
+            Vector2fc::class -> UBValueFactory.createArray((value as Vector2fc).toArray())
+            Vector2dc::class -> UBValueFactory.createArray((value as Vector2dc).toArray())
+            Vector3ic::class -> UBValueFactory.createArray((value as Vector3ic).toArray())
+            Vector3fc::class -> UBValueFactory.createArray((value as Vector3fc).toArray())
+            Vector3dc::class -> UBValueFactory.createArray((value as Vector3dc).toArray())
             else -> {
                 if(value is Array<*> && value.isArrayOf<String>()) {
                     UBValueFactory.createArray(value as Array<String>)
@@ -114,6 +122,14 @@ class UBJ(initUBO: UBObject? = null) {
     fun putDoubleArray(key: String, value: DoubleArray) = ubo.put(key, UBValueFactory.createArray(value))
 
     fun putStringArray(key: String, value: Array<String>) = ubo.put(key, UBValueFactory.createArray(value))
+
+    fun putVector2i(key: String, value: Vector2ic) = ubo.put(key, UBValueFactory.createArray(value.toArray()))
+    fun putVector2f(key: String, value: Vector2fc) = ubo.put(key, UBValueFactory.createArray(value.toArray()))
+    fun putVector2d(key: String, value: Vector2dc) = ubo.put(key, UBValueFactory.createArray(value.toArray()))
+
+    fun putVector3i(key: String, value: Vector3ic) = ubo.put(key, UBValueFactory.createArray(value.toArray()))
+    fun putVector3f(key: String, value: Vector3fc) = ubo.put(key, UBValueFactory.createArray(value.toArray()))
+    fun putVector3d(key: String, value: Vector3dc) = ubo.put(key, UBValueFactory.createArray(value.toArray()))
 
     /** READING **/
 
@@ -220,6 +236,30 @@ class UBJ(initUBO: UBObject? = null) {
     fun readStringArray(key: String): Array<String> = ubo[key]!!.asStringArray()
     fun readStringArrayNullable(key: String): Array<String>? = ubo[key]?.asStringArray()
     fun readStringArrayOrDefault(key: String, default: Array<String> = emptyArray()): Array<String> = ubo[key]?.asStringArray() ?: default
+
+    fun readVector2i(key: String): Vector2i = ubo[key]!!.asInt32Array().let { Vector2i(it[0], it[1]) }
+    fun readVector2iNullable(key: String): Vector2i? = ubo[key]?.asInt32Array()?.let { Vector2i(it[0], it[1]) }
+    fun readVector2iOrDefault(key: String, default: Vector2i = Vector2i(0, 0)): Vector2i = ubo[key]?.asInt32Array()?.let { Vector2i(it[0], it[1]) } ?: default
+
+    fun readVector2f(key: String): Vector2f = ubo[key]!!.asFloat32Array().let { Vector2f(it[0], it[1]) }
+    fun readVector2fNullable(key: String): Vector2f? = ubo[key]?.asFloat32Array()?.let { Vector2f(it[0], it[1]) }
+    fun readVector2fOrDefault(key: String, default: Vector2f = Vector2f(0f, 0f)): Vector2f = ubo[key]?.asFloat32Array()?.let { Vector2f(it[0], it[1]) } ?: default
+
+    fun readVector2d(key: String): Vector2d = ubo[key]!!.asFloat64Array().let { Vector2d(it[0], it[1]) }
+    fun readVector2dNullable(key: String): Vector2d? = ubo[key]?.asFloat64Array()?.let { Vector2d(it[0], it[1]) }
+    fun readVector2dOrDefault(key: String, default: Vector2d = Vector2d(0.0, 0.0)): Vector2d = ubo[key]?.asFloat64Array()?.let { Vector2d(it[0], it[1]) } ?: default
+
+    fun readVector3i(key: String): Vector3i = ubo[key]!!.asInt32Array().let { Vector3i(it[0], it[1], it[2]) }
+    fun readVector3iNullable(key: String): Vector3i? = ubo[key]?.asInt32Array()?.let { Vector3i(it[0], it[1], it[2]) }
+    fun readVector3iOrDefault(key: String, default: Vector3i = Vector3i(0, 0, 0)): Vector3i = ubo[key]?.asInt32Array()?.let { Vector3i(it[0], it[1], it[2]) } ?: default
+
+    fun readVector3f(key: String): Vector3f = ubo[key]!!.asFloat32Array().let { Vector3f(it[0], it[1], it[2]) }
+    fun readVector3fNullable(key: String): Vector3f? = ubo[key]?.asFloat32Array()?.let { Vector3f(it[0], it[1], it[2]) }
+    fun readVector3fOrDefault(key: String, default: Vector3f = Vector3f(0f, 0f, 0f)): Vector3f = ubo[key]?.asFloat32Array()?.let { Vector3f(it[0], it[1], it[2]) } ?: default
+
+    fun readVector3d(key: String): Vector3d = ubo[key]!!.asFloat64Array().let { Vector3d(it[0], it[1], it[2]) }
+    fun readVector3dNullable(key: String): Vector3d? = ubo[key]?.asFloat64Array()?.let { Vector3d(it[0], it[1], it[2]) }
+    fun readVector3dOrDefault(key: String, default: Vector3d = Vector3d(0.0, 0.0, 0.0)): Vector3d = ubo[key]?.asFloat64Array()?.let { Vector3d(it[0], it[1], it[2]) } ?: default
 
     /** BYTE ARRAY CONVERSIONS **/
 
