@@ -90,7 +90,3 @@ object ModLoader {
         // TODO
     }
 }
-
-fun main() {
-    ModLoader.injectMods()
-}
