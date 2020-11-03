@@ -1,7 +1,21 @@
+plugins {
+    id "application"
+}
+
 group 'com.zerra.core'
+
+apply plugin : "java"
 
 dependencies {
     implementation project(':client')
     implementation project(':common')
     implementation project(':server')
+}
+
+ext {
+    javaMainClass = "com.zerra.client.ClientLaunchKt"
+}
+
+application {
+    mainClassName = javaMainClass
 }

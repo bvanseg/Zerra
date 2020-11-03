@@ -35,7 +35,6 @@ abstract class Entity: Storable {
         ubj.put("ticksExisted", ticksExisted)
         ubj.put("pos", position)
         ubj.put("vel", velocity)
-
         return ubj
     }
 }

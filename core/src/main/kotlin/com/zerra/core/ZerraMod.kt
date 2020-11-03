@@ -1,5 +1,6 @@
 package com.zerra.core
 
+import bvanseg.kotlincommons.evenir.annotation.SubscribeEvent
 import com.zerra.common.api.event.ModInitializationEvent
 import com.zerra.common.api.mod.Mod
 import com.zerra.common.api.mod.ModLoader
@@ -12,12 +13,13 @@ import com.zerra.core.server.ZerraServerRegistry
  * @since 0.0.1
  */
 @Mod("zerra")
-internal object ZerraMod {
+object ZerraMod {
 
     init {
-        ModLoader.EVENT_BUS.addListener(ZerraMod::init)
+        ModLoader.EVENT_BUS.addListener(this)
     }
 
+    @SubscribeEvent
     private fun init(event: ModInitializationEvent) {
         when(event.side) {
             Side.CLIENT -> ZerraClientRegistry.init()

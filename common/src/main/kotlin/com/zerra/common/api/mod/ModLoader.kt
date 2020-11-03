@@ -62,7 +62,7 @@ object ModLoader {
         val metadata = modClass.getAnnotation(Mod::class.java)
         val domain = metadata.domain
 
-        if (domain.equals("zerra", true)) {
+        if (mods[domain.toLowerCase()] != null && domain.equals("zerra", true)) {
             throw ModLoadException("The domain name '$domain' is the same as the game's domain")
         }
 
