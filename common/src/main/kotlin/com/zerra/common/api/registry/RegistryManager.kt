@@ -15,7 +15,8 @@ abstract class RegistryManager {
 
     val logger = getLogger()
 
-    val registries = hashMapOf<KClass<*>, Registry<*, *>>()
+    @PublishedApi
+    internal val registries = hashMapOf<KClass<*>, Registry<*, *>>()
 
     val REALM_REGISTRY = addClassInstanceRegistry<Realm>()
     val ENTITY_REGISTRY = addFactoryRegistry<Entity>()
@@ -42,4 +43,6 @@ abstract class RegistryManager {
         logger.info("Initializing registry manager")
         ENTITY_REGISTRY.register(EntityPlayer::class)
     }
+
+    fun getRegistries(): Map<KClass<*>, Registry<*, *>> = registries
 }

@@ -3,6 +3,10 @@ package com.zerra.client.util
 import com.zerra.client.render.GameWindow
 import org.lwjgl.opengl.GL33C.*
 
+/**
+ * @author Ocelot5836
+ * @since 0.0.1
+ */
 object HardwareConstraints {
     val maxTextureSize: Int by lazy { glGetInteger(GL_MAX_TEXTURE_SIZE) }
     val maxVaryingFloats: Int by lazy { glGetInteger(GL_MAX_VARYING_FLOATS) }

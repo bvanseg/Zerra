@@ -6,7 +6,7 @@ package com.zerra.common.realm
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-class Universe {
+class Universe internal constructor() {
 
     var ticksExisted: Long = 0
     val realmManager = RealmManager()

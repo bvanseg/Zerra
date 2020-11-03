@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-class RealmManager {
+class RealmManager internal constructor() {
 
     val loadedRealms = ConcurrentHashMap.newKeySet<Realm>()
 

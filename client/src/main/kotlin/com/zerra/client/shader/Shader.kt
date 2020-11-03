@@ -12,7 +12,11 @@ import java.io.IOException
 import java.util.*
 import kotlin.collections.HashMap
 
-class Shader(private val name: ResourceLocation) : NativeResource {
+/**
+ * @author Ocelot5836
+ * @since 0.0.1
+ */
+class Shader internal constructor(private val name: ResourceLocation) : NativeResource {
 
     private var program = 0
     private val shaders = IntArray(ShaderType.values().size)

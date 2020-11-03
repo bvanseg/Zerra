@@ -2,20 +2,19 @@ package com.zerra.client.state
 
 import com.zerra.client.entity.ClientEntityPlayer
 import com.zerra.client.render.GameRenderManager
-import com.zerra.common.realm.Universe
 import com.zerra.common.realm.Realm
+import com.zerra.common.state.GameState
 
 /**
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-class ClientGameState: ClientState {
+class ClientGameState: GameState(), ClientState {
 
     private val activeRealm: Realm? = null
 
     private val clientPlayer = ClientEntityPlayer()
 
-    private val universe = Universe()
     private val renderManager = GameRenderManager()
 
     override fun init() {

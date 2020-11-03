@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-class EntityManager(val realm: Realm) {
+class EntityManager internal constructor(val realm: Realm) {
 
     val entities = ConcurrentHashMap<UUID, Entity>()
 
