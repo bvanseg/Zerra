@@ -52,7 +52,7 @@ object ModLoader {
         logger.trace("Trying to load mod class ${modClass.name}")
 
         val mod = try {
-            createNewInstance(modClass)
+            modClass.kotlin.objectInstance ?: createNewInstance(modClass)
         } catch(e: NoSuchMethodException) {
             throw ModLoadException("Failed to construct mod class instance for $modClass. Make sure you have a no-arg constructor!", e)
         } catch(e: UninitializedPropertyAccessException) {
