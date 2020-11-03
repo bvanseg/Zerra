@@ -37,6 +37,10 @@ class UBJ(initUBO: UBObject? = null) {
             Short::class,
             Int::class,
             Long::class -> UBValueFactory.createInt(value as Long)
+            UByte::class -> UBValueFactory.createInt((value as UByte).toLong())
+            UShort::class -> UBValueFactory.createInt((value as UShort).toLong())
+            UInt::class -> UBValueFactory.createInt((value as UInt).toLong())
+            ULong::class -> UBValueFactory.createInt((value as ULong).toLong())
             Float::class -> UBValueFactory.createFloat32(value as Float)
             Double::class -> UBValueFactory.createFloat64(value as Double)
             String::class -> UBValueFactory.createString(value as String)
@@ -77,6 +81,18 @@ class UBJ(initUBO: UBObject? = null) {
     fun putShort(key: String, value: Short) = ubo.put(key, UBValueFactory.createInt(value.toLong()))
     fun putInt(key: String, value: Int) = ubo.put(key, UBValueFactory.createInt(value.toLong()))
     fun putLong(key: String, value: Long) = ubo.put(key, UBValueFactory.createInt(value))
+
+    @ExperimentalUnsignedTypes
+    fun putUnsignedByte(key: String, value: UByte) = ubo.put(key, UBValueFactory.createInt(value.toLong()))
+
+    @ExperimentalUnsignedTypes
+    fun putUnsignedShort(key: String, value: UShort) = ubo.put(key, UBValueFactory.createInt(value.toLong()))
+
+    @ExperimentalUnsignedTypes
+    fun putUnsignedInt(key: String, value: UInt) = ubo.put(key, UBValueFactory.createInt(value.toLong()))
+
+    @ExperimentalUnsignedTypes
+    fun putUnsignedLong(key: String, value: ULong) = ubo.put(key, UBValueFactory.createInt(value.toLong()))
 
     fun putBigInteger(key: String, value: BigInteger) = ubo.put(key, UBValueFactory.createArray(value.toByteArray()))
 
@@ -124,6 +140,34 @@ class UBJ(initUBO: UBObject? = null) {
     fun readLong(key: String): Long = ubo[key]!!.asLong()
     fun readLongNullable(key: String): Long? = ubo[key]?.asLong()
     fun readLongOrDefault(key: String, default: Long): Long = ubo[key]?.asLong() ?: default
+
+    @ExperimentalUnsignedTypes
+    fun readUnsignedByte(key: String): UByte = ubo[key]!!.asByte().toUByte()
+    @ExperimentalUnsignedTypes
+    fun readUnsignedByteNullable(key: String): UByte? = ubo[key]?.asByte()?.toUByte()
+    @ExperimentalUnsignedTypes
+    fun readUnsignedByteOrDefault(key: String, default: UByte): UByte = ubo[key]?.asByte()?.toUByte() ?: default
+
+    @ExperimentalUnsignedTypes
+    fun readUnsignedShort(key: String): UShort = ubo[key]!!.asShort().toUShort()
+    @ExperimentalUnsignedTypes
+    fun readUnsignedShortNullable(key: String): UShort? = ubo[key]?.asShort()?.toUShort()
+    @ExperimentalUnsignedTypes
+    fun readUnsignedShortOrDefault(key: String, default: UShort): UShort = ubo[key]?.asShort()?.toUShort() ?: default
+
+    @ExperimentalUnsignedTypes
+    fun readUnsignedInt(key: String): UInt = ubo[key]!!.asInt().toUInt()
+    @ExperimentalUnsignedTypes
+    fun readUnsignedIntNullable(key: String): UInt? = ubo[key]?.asInt()?.toUInt()
+    @ExperimentalUnsignedTypes
+    fun readUnsignedIntOrDefault(key: String, default: UInt): UInt = ubo[key]?.asInt()?.toUInt() ?: default
+
+    @ExperimentalUnsignedTypes
+    fun readUnsignedLong(key: String): ULong = ubo[key]!!.asLong().toULong()
+    @ExperimentalUnsignedTypes
+    fun readUnsignedLongNullable(key: String): ULong? = ubo[key]?.asLong()?.toULong()
+    @ExperimentalUnsignedTypes
+    fun readUnsignedLongOrDefault(key: String, default: ULong): ULong = ubo[key]?.asLong()?.toULong() ?: default
 
     fun readBigInteger(key: String): BigInteger = BigInteger(ubo[key]!!.asByteArray())
     fun readBigIntegerNullable(key: String): BigInteger? = ubo[key]?.asByteArray()?.let { BigInteger(it) }
