@@ -12,7 +12,7 @@ open class ResourceManager(val root: String, val domain: String) {
 
     val logger = getLogger()
 
-    fun getResourceAtLocation(location: String): ResourceLocation = ResourceLocation(this, domain, location)
+    fun createResourceLocation(location: String): ResourceLocation = ResourceLocation(this, domain, location)
 
     fun resourceExists(location: String): Boolean = !MasterResourceManager.resources.getResourcesWithPath("$root$domain/$location").isNullOrEmpty()
 }

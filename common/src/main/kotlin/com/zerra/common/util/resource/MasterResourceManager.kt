@@ -9,9 +9,7 @@ import io.github.classgraph.ScanResult
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-object MasterResourceManager {
-
-    val logger = getLogger()
+object MasterResourceManager: ResourceManager("/", "master") {
 
     private val resourceManagers = hashMapOf<String, ResourceManager>()
 
@@ -45,4 +43,7 @@ object MasterResourceManager {
     }
 
     fun getResourceManager(domain: String) = resourceManagers[domain.toLowerCase()]
+
+    fun createResourceLocation(domain: String, location: String) = ResourceLocation(this, domain, location)
+    fun createResourceLocation(root: String, domain: String, location: String) = ResourceLocation(this, root + domain, location)
 }

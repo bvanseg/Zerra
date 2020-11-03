@@ -13,7 +13,7 @@ class TestResourceManager {
 
         // WHEN
         MasterResourceManager.scanResources()
-        val foobar = manager.getResourceAtLocation("foobar.txt")
+        val foobar = manager.createResourceLocation("foobar.txt")
 
         // THEN
         assertEquals("zerra", foobar.domain)
@@ -28,7 +28,7 @@ class TestResourceManager {
 
         // WHEN
         MasterResourceManager.scanResources()
-        val foobar = manager.getResourceAtLocation("foobar.txt")
+        val foobar = manager.createResourceLocation("foobar.txt")
 
         // THEN
         assertTrue(foobar.file != null)
