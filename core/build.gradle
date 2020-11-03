@@ -1,0 +1,7 @@
+group 'com.zerra.core'
+
+dependencies {
+    implementation project(':client')
+    implementation project(':common')
+    implementation project(':server')
+}

@@ -17,7 +17,7 @@ import kotlin.reflect.jvm.jvmName
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-internal object ModLoader {
+object ModLoader {
 
     val logger = getLogger()
 
@@ -27,7 +27,7 @@ internal object ModLoader {
 
     private var hasLoaded = false
 
-    fun loadAllMods() {
+    internal fun loadAllMods() {
         injectMods()
         findAndLoadMods()
     }
@@ -62,7 +62,7 @@ internal object ModLoader {
         val metadata = modClass.getAnnotation(Mod::class.java)
         val domain = metadata.domain
 
-        if (domain.equals("zerra", true) && mod !is ZerraMod) {
+        if (domain.equals("zerra", true)) {
             throw ModLoadException("The domain name '$domain' is the same as the game's domain")
         }
 

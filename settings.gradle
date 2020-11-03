@@ -2,3 +2,5 @@ rootProject.name = 'Zerra'
 include 'client'
 include 'common'
 include 'server'
+include 'core'
+
