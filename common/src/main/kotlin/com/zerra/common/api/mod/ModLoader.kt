@@ -49,7 +49,7 @@ object ModLoader {
     }
 
     private fun loadMod(modClass: Class<*>) = try {
-        logger.trace("Trying to load mod class ${modClass.name}")
+        logger.trace("Attempting to load mod class ${modClass.name}")
 
         val mod = try {
             modClass.kotlin.objectInstance ?: createNewInstance(modClass)

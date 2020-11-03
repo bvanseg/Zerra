@@ -18,11 +18,12 @@ object MasterResourceManager: ResourceManager("/", "master") {
 
     fun scanResources(forceScan: Boolean = false, classGraphSupplier: ClassGraph? = null) {
         logger.info("Scanning all resources...")
+        val start = System.currentTimeMillis()
         if (!scanInitialized || forceScan) {
             scanInitialized = true
             resources = (classGraphSupplier ?: ClassGraph().enableAllInfo()).scan()
         }
-        logger.info("Scan finished.")
+        logger.info("Resource scan finished in ${System.currentTimeMillis() - start}ms")
     }
 
     private fun close() = scanInitialized.ifTrue { resources.close() }
