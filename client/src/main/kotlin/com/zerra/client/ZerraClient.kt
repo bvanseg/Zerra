@@ -2,14 +2,13 @@ package com.zerra.client
 
 import bvanseg.kotlincommons.any.getLogger
 import com.zerra.client.render.GameWindow
-import com.zerra.client.shader.Shader
-import com.zerra.client.state.ClientGameState
 import com.zerra.client.state.ClientState
 import com.zerra.client.state.ClientStateManager
+import com.zerra.client.state.TestRenderState
 import com.zerra.common.Zerra
 import com.zerra.common.api.state.StateManager
 import com.zerra.common.network.Side
-import com.zerra.common.util.resource.ResourceLocation
+import org.lwjgl.opengl.GL33C
 import org.lwjgl.system.NativeResource
 
 /**
@@ -41,8 +40,6 @@ class ZerraClient private constructor() : Zerra(), NativeResource {
         localSide.set(Side.CLIENT)
     }
 
-    val testShader: Shader = Shader(ResourceLocation(getResourceManager(), "zerra", "test"))
-
     override fun init() {
         super.init()
 
@@ -53,16 +50,18 @@ class ZerraClient private constructor() : Zerra(), NativeResource {
     fun initClient() {
         // Create window
         GameWindow.init()
-        GameWindow.create(1920, 1080, "Zerra")
-
-        testShader.load()
+        GameWindow.create(1280, 720, "Zerra")
     }
 
     override fun free() {
-        testShader.free()
+        ClientStateManager.activeState.dispose()
     }
 
     fun render() {
+        val error = GL33C.glGetError()
+        if (error != GL33C.GL_NO_ERROR)
+            logger.warn("OpenGL Error: 0x${Integer.toHexString(error)}")
+
         val state = ClientStateManager.activeState
         if (state is ClientState) {
             state.render()
@@ -75,7 +74,8 @@ class ZerraClient private constructor() : Zerra(), NativeResource {
 
     override fun createGame() {
         logger.info("Creating new game")
-        ClientStateManager.setState(ClientGameState())
+//        ClientStateManager.setState(ClientGameState()) TODO temporary
+        ClientStateManager.setState(TestRenderState(getResourceManager()))
     }
 
     override fun getStateManager(): StateManager = ClientStateManager

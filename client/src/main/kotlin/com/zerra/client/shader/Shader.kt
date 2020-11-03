@@ -34,7 +34,8 @@ class Shader(private val name: ResourceLocation) : NativeResource {
         glCompileShader(shader)
 
         if (glGetShaderi(shader, GL_COMPILE_STATUS) != GL_TRUE)
-            throw IOException("Failed to compile ${type.name.toLowerCase(Locale.ROOT)}: ${GL20C.glGetShaderInfoLog(shader)}")
+            throw IOException(GL20C.glGetShaderInfoLog(shader))
+        logger.debug("Compiled ${type.name.toLowerCase(Locale.ROOT)} shader for ${name.domain}/${name.location} shader")
 
         if (program == 0)
             program = glCreateProgram()
@@ -46,7 +47,8 @@ class Shader(private val name: ResourceLocation) : NativeResource {
     private fun link() {
         glLinkProgram(program)
         if (glGetProgrami(program, GL_LINK_STATUS) != GL_TRUE)
-            throw IOException("Failed to link shader: ${glGetProgramInfoLog(program)}")
+            throw IOException(glGetProgramInfoLog(program))
+        logger.debug("Linked ${name.domain}/${name.location} shader")
     }
 
     /**
@@ -60,12 +62,14 @@ class Shader(private val name: ResourceLocation) : NativeResource {
                 compile(type, source)
             }
 
-            if (program == 0)
-                throw IllegalStateException("No shader sources were found")
+            if (program == 0) {
+                logger.warn("No shader sources were found for ${name.domain}/${name.location} shader.")
+                return
+            }
 
             link()
         } catch (e: Exception) {
-            logger.error("Failed to create $name shader.", e)
+            logger.error("Failed to create ${name.domain}/${name.location} shader.", e)
             free()
         }
     }
