@@ -8,4 +8,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 abstract class Registry<K, V: Any> {
     protected open val entries = ConcurrentHashMap<K, RegistryEntry<K, out V>>()
+
+    val size: Int
+        get() = entries.size
 }
