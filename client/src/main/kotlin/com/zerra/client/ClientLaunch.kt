@@ -21,6 +21,9 @@ fun main() {
     while (!GameWindow.closeRequested) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
+        // Execute tasks
+        client.flushTasks()
+
         loopStart = System.nanoTime()
 
         val now = System.nanoTime()

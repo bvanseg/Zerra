@@ -96,7 +96,7 @@ class ZerraClient private constructor() : Zerra() {
     override fun createGame() {
         logger.info("Creating new game")
 //        ClientStateManager.setState(ClientGameState()) TODO temporary
-        ClientStateManager.setState(TestRenderState(getResourceManager()))
+        ClientStateManager.setState(TestRenderState(textureManager, getResourceManager()))
     }
 
     override fun getStateManager(): StateManager = ClientStateManager

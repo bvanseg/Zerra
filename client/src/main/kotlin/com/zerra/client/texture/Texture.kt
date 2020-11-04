@@ -1,10 +1,12 @@
 package com.zerra.client.texture
 
-import com.zerra.client.util.Bindable
 import com.zerra.common.util.resource.ResourceManager
 import org.lwjgl.system.NativeResource
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executor
 
-interface Texture : Bindable, NativeResource {
-    fun load(resourceManager: ResourceManager, textureManager: TextureManager): CompletableFuture<Void>
+interface Texture : NativeResource {
+    fun bind()
+
+    fun load(resourceManager: ResourceManager, textureManager: TextureManager, backgroundExecutor: Executor, mainExecutor: Executor): CompletableFuture<Void>
 }

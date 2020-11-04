@@ -13,13 +13,21 @@ class TextureManager(private val resourceManager: ResourceManager) : NativeResou
 
     private val textures = HashMap<ResourceLocation, Texture>()
 
-    private fun preload(location: ResourceLocation) {
-        println("TODO preload $location")
-    }
-
     override fun free() {
         textures.values.forEach(NativeResource::free)
         textures.clear()
+    }
+
+    fun loadTexture(location: ResourceLocation, texture: Texture) {
+        textures[location]?.free()
+        texture.load(resourceManager, this, Runnable::run, Runnable::run).join()
+        textures[location] = texture
+    }
+
+    fun bind(location: ResourceLocation) {
+        if (!textures.containsKey(location))
+            loadTexture(location, SimpleTexture(location))
+        textures[location]?.bind()
     }
 
     // TODO make async
@@ -29,7 +37,8 @@ class TextureManager(private val resourceManager: ResourceManager) : NativeResou
                 it.inputStream?.use { stream ->
                     InputStreamReader(stream).use { reader ->
                         JsonParser.parseReader(reader).asJsonArray.forEach { element ->
-                            preload(it.resourceManager.createResourceLocation(element.asString))
+                            val location = it.resourceManager.createResourceLocation(element.asString)
+                            textures[location] = SimpleTexture(location)
                         }
                     }
                 }
@@ -37,7 +46,9 @@ class TextureManager(private val resourceManager: ResourceManager) : NativeResou
                 logger.error("Failed to load preloaded textures from $it", e)
             }
         }
-        CompletableFuture.allOf(*textures.values.stream().map { it.load(resourceManager, this) }.toArray { size -> arrayOfNulls<CompletableFuture<Void>>(size) }).join()
+        CompletableFuture.allOf(*textures.values.stream().map {
+            it.load(resourceManager, this, Runnable::run, Runnable::run)
+        }.toArray { size -> arrayOfNulls<CompletableFuture<Void>>(size) }).join()
     }
 
     companion object {
