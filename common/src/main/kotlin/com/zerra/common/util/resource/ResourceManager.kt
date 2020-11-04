@@ -1,6 +1,7 @@
 package com.zerra.common.util.resource
 
 import bvanseg.kotlincommons.any.getLogger
+import java.util.function.Predicate
 
 /**
  * Used to manage files within a specified domain-space.
@@ -20,7 +21,7 @@ open class ResourceManager(val root: String, val domain: String) {
         return MasterResourceManager.resources.allResources.filter { it.path.startsWith("$root$domain/") }.map { ResourceLocation(this, domain, it.path.substring(root.length + domain.length + 1)) }
     }
 
-    fun getResourceLocations(location: String): Collection<ResourceLocation> {
-        return MasterResourceManager.resources.allResources.filter { it.path.startsWith("$root$domain/") && it.path.substring(root.length + domain.length + 1).startsWith(location) }.map { ResourceLocation(this, domain, it.path.substring(root.length + domain.length + 1)) }
+    fun getResourceLocations(location: String, predicate: Predicate<String>): Collection<ResourceLocation> {
+        return MasterResourceManager.resources.allResources.filter { it.path.startsWith("$root$domain/") && it.path.substring(root.length + domain.length + 1).startsWith(location) && predicate.test(it.path.substring(root.length + domain.length + 1)) }.map { ResourceLocation(this, domain, it.path.substring(root.length + domain.length + 1)) }
     }
 }

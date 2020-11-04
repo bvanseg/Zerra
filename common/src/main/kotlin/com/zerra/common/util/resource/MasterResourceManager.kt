@@ -3,6 +3,7 @@ package com.zerra.common.util.resource
 import bvanseg.kotlincommons.bool.ifTrue
 import io.github.classgraph.ClassGraph
 import io.github.classgraph.ScanResult
+import java.util.function.Predicate
 
 /**
  * @author Boston Vanseghi
@@ -52,9 +53,9 @@ object MasterResourceManager : ResourceManager("", "master") {
         return locations
     }
 
-    fun getAllResourceLocations(location: String): Collection<ResourceLocation> {
+    fun getAllResourceLocations(location: String, predicate: Predicate<String>): Collection<ResourceLocation> {
         val locations = HashSet<ResourceLocation>()
-        resourceManagers.values.forEach { locations.addAll(it.getResourceLocations(location)) }
+        resourceManagers.values.forEach { locations.addAll(it.getResourceLocations(location, predicate)) }
         return locations
     }
 
