@@ -21,7 +21,7 @@ open class ResourceManager(val root: String, val domain: String) {
         return MasterResourceManager.resources.allResources.filter { it.path.startsWith("$root$domain/") }.map { ResourceLocation(this, domain, it.path.substring(root.length + domain.length + 1)) }
     }
 
-    fun getResourceLocations(location: String, predicate: Predicate<String>): Collection<ResourceLocation> {
-        return MasterResourceManager.resources.allResources.filter { it.path.startsWith("$root$domain/") && it.path.substring(root.length + domain.length + 1).startsWith(location) && predicate.test(it.path.substring(root.length + domain.length + 1)) }.map { ResourceLocation(this, domain, it.path.substring(root.length + domain.length + 1)) }
+    fun getResourceLocations(predicate: Predicate<String>): Collection<ResourceLocation> {
+        return MasterResourceManager.resources.allResources.filter { it.path.startsWith("$root$domain/") && predicate.test(it.path.substring(root.length + domain.length + 1)) }.map { ResourceLocation(this, domain, it.path.substring(root.length + domain.length + 1)) }
     }
 }

@@ -53,9 +53,9 @@ object MasterResourceManager : ResourceManager("", "master") {
         return locations
     }
 
-    fun getAllResourceLocations(location: String, predicate: Predicate<String>): Collection<ResourceLocation> {
+    fun getAllResourceLocations(predicate: Predicate<String>): Collection<ResourceLocation> {
         val locations = HashSet<ResourceLocation>()
-        resourceManagers.values.forEach { locations.addAll(it.getResourceLocations(location, predicate)) }
+        resourceManagers.values.forEach { locations.addAll(it.getResourceLocations(predicate)) }
         return locations
     }
 
