@@ -170,11 +170,15 @@ object VertexBuilder : NativeResource {
     }
 
     fun compile(): VertexArray {
+        if (vertexSize == -1)
+            throw IllegalStateException("No vertex count specified")
+
+        val useIndices = indicesBuffer.position() > 0
         val vao = glGenVertexArrays()
         val vbo = glGenBuffers()
-        val indicesVbo = glGenBuffers()
+        val indicesVbo = if (useIndices) glGenBuffers() else -1
         copy(vao, vbo, indicesVbo)
-        return VertexArray(vao, intArrayOf(vbo, indicesVbo), IntArray(segments.size) { it }, vertexCount, indicesType)
+        return VertexArray(vao, if (useIndices) intArrayOf(vbo, indicesVbo) else intArrayOf(vbo), IntArray(segments.size) { it }, if (useIndices) vertexCount else vertexCount / vertexSize, indicesType)
     }
 
     fun copy(vao: Int, vbo: Int, indicesVbo: Int = -1, attributeOffset: Int = 0): VertexBuilder {

@@ -9,8 +9,7 @@ import com.zerra.common.util.TransformationHelper
 import com.zerra.common.util.resource.ResourceLocation
 import com.zerra.common.util.resource.ResourceManager
 import org.joml.Matrix4f
-import org.lwjgl.opengl.GL33C.GL_FLOAT
-import org.lwjgl.opengl.GL33C.glClearColor
+import org.lwjgl.opengl.GL33C.*
 
 class TestRenderState(private val textureManager: TextureManager, resourceManager: ResourceManager) : ClientState {
 
@@ -20,13 +19,19 @@ class TestRenderState(private val textureManager: TextureManager, resourceManage
     private var test = 0
 
     override fun render(partialTicks: Float) {
-        testShader.use {
-            testShader.loadMatrix4f("projection", Matrix4f().perspective(45f, GameWindow.framebufferWidth.toFloat() / GameWindow.framebufferHeight.toFloat(), 0.3f, 10000.0f))
-            testShader.loadMatrix4f("transformation", TransformationHelper.get().translate(0f, 0f, -1f).rotate((test + partialTicks).toDouble() / 5, 0f, 1f, 0f).value())
-            testShader.loadFloat("counter", test + partialTicks)
+        for (i in 0 until 2) {
+            if(i == 1)
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+            testShader.use {
+                testShader.loadMatrix4f("projection", Matrix4f().perspective(45f, GameWindow.framebufferWidth.toFloat() / GameWindow.framebufferHeight.toFloat(), 0.3f, 10000.0f))
+                testShader.loadMatrix4f("transformation", TransformationHelper.get().translate(-0.75f + i * 1.5f, 0f, -2f).rotate((test + partialTicks).toDouble() / 5, 0f, 1f, 0f).value())
+                testShader.loadFloat("counter", test + partialTicks)
 
-            textureManager.bind(testTextureLocation)
-            vao?.render()
+                textureManager.bind(testTextureLocation)
+                vao?.render()
+            }
+            if(i == 1)
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
         }
     }
 
