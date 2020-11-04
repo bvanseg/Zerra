@@ -2,42 +2,36 @@ package com.zerra.client.state
 
 import com.zerra.client.render.GameWindow
 import com.zerra.client.shader.Shader
+import com.zerra.client.texture.TextureManager
+import com.zerra.client.vertex.VertexArray
 import com.zerra.client.vertex.VertexBuilder
 import com.zerra.common.util.TransformationHelper
 import com.zerra.common.util.resource.ResourceLocation
 import com.zerra.common.util.resource.ResourceManager
 import org.joml.Matrix4f
-import org.lwjgl.opengl.GL33C.*
+import org.lwjgl.opengl.GL33C.GL_FLOAT
+import org.lwjgl.opengl.GL33C.glClearColor
 
-class TestRenderState(resourceManager: ResourceManager) : ClientState {
+class TestRenderState(private val textureManager: TextureManager, resourceManager: ResourceManager) : ClientState {
 
-    private val testShader: Shader = Shader(ResourceLocation(resourceManager, "zerra", "test"))
-    private var vao = 0
-    private var vbo1 = 0
-    private var vbo2 = 0
+    private val testShader = Shader(ResourceLocation(resourceManager, "zerra", "test"))
+    private val testTextureLocation = resourceManager.createResourceLocation("textures/b5fca2fe-313d-4d53-a16a-6c856c7da7e3.jpg")
+    private var vao: VertexArray? = null
     private var test = 0
 
     override fun render(partialTicks: Float) {
         testShader.use {
             testShader.loadMatrix4f("projection", Matrix4f().perspective(45f, GameWindow.framebufferWidth.toFloat() / GameWindow.framebufferHeight.toFloat(), 0.3f, 10000.0f))
-            testShader.loadMatrix4f("transformation", TransformationHelper.get().translate(0f, 0f, -2f).rotate((test + partialTicks).toDouble(), 0f, 1f, 0f).value())
+            testShader.loadMatrix4f("transformation", TransformationHelper.get().translate(0f, 0f, -1f).rotate((test + partialTicks).toDouble() / 5, 0f, 1f, 0f).value())
+            testShader.loadFloat("counter", test + partialTicks)
 
-            glBindVertexArray(vao)
-            glEnableVertexAttribArray(0)
-            glEnableVertexAttribArray(1)
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0)
-            glDisableVertexAttribArray(1)
-            glDisableVertexAttribArray(0)
-            glBindVertexArray(0)
+            textureManager.bind(testTextureLocation)
+            vao?.render()
         }
     }
 
     override fun init() {
         testShader.load()
-
-        vao = glGenVertexArrays()
-        vbo1 = glGenBuffers()
-        vbo2 = glGenBuffers()
 
 //        glBindVertexArray(vao)
 //
@@ -53,11 +47,13 @@ class TestRenderState(resourceManager: ResourceManager) : ClientState {
 //        glBindVertexArray(0)
 
         VertexBuilder.reset().segment(GL_FLOAT, 2)
-        VertexBuilder.put(-0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, -0.5f)
+        VertexBuilder.put(-0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, -0.5f, vertexData = true)
         VertexBuilder.segment(GL_FLOAT, 3)
         VertexBuilder.put(0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f)
+        VertexBuilder.segment(GL_FLOAT, 2)
+        VertexBuilder.put(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f)
         VertexBuilder.indices(2, 1, 0, 3, 2, 0)
-        VertexBuilder.copy(vao, vbo1, vbo2)
+        vao = VertexBuilder.compile()
 
 //        glEnable(GL_CULL_FACE)
 //        glCullFace(GL_BACK)
@@ -69,9 +65,7 @@ class TestRenderState(resourceManager: ResourceManager) : ClientState {
     }
 
     override fun dispose() {
-        glDeleteBuffers(vbo1)
-        glDeleteBuffers(vbo2)
-        glDeleteVertexArrays(vao)
         testShader.free()
+        vao?.free()
     }
 }

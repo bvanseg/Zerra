@@ -5,6 +5,7 @@ import com.zerra.client.render.GameWindow
 import com.zerra.client.state.ClientState
 import com.zerra.client.state.ClientStateManager
 import com.zerra.client.state.TestRenderState
+import com.zerra.client.texture.TextureManager
 import com.zerra.client.vertex.VertexBuilder
 import com.zerra.common.Zerra
 import com.zerra.common.api.state.StateManager
@@ -43,6 +44,8 @@ class ZerraClient private constructor() : Zerra() {
         }
     }
 
+    val textureManager = TextureManager(getResourceManager())
+
     init {
         localSide.set(Side.CLIENT)
     }
@@ -60,6 +63,8 @@ class ZerraClient private constructor() : Zerra() {
         GameWindow.create(1280, 720, "Zerra")
         GameWindow.setVsync(true)
 
+        textureManager.load()
+
         println(MasterResourceManager.getAllResourceLocations())
         println(MasterResourceManager.getAllResourceLocations { it == "textures/preload.json" })
 
@@ -71,6 +76,7 @@ class ZerraClient private constructor() : Zerra() {
 
     override fun cleanup() {
         ClientStateManager.activeState.dispose()
+        textureManager.free()
         VertexBuilder.free()
     }
 
@@ -90,7 +96,7 @@ class ZerraClient private constructor() : Zerra() {
     override fun createGame() {
         logger.info("Creating new game")
 //        ClientStateManager.setState(ClientGameState()) TODO temporary
-        ClientStateManager.setState(TestRenderState(getResourceManager()))
+        ClientStateManager.setState(TestRenderState(textureManager, getResourceManager()))
     }
 
     override fun getStateManager(): StateManager = ClientStateManager

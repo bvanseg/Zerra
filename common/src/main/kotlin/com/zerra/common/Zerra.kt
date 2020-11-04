@@ -8,6 +8,9 @@ import com.zerra.common.api.state.StateManager
 import com.zerra.common.network.Side
 import com.zerra.common.util.resource.MasterResourceManager
 import com.zerra.common.util.resource.ResourceManager
+import java.util.*
+import java.util.concurrent.ConcurrentLinkedDeque
+import java.util.concurrent.Executor
 
 /**
  * Common game class for both client and server side instances.
@@ -15,7 +18,7 @@ import com.zerra.common.util.resource.ResourceManager
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-abstract class Zerra {
+abstract class Zerra : Executor {
 
     companion object {
         const val TICKS_PER_SECOND = 60
@@ -40,8 +43,18 @@ abstract class Zerra {
      * this value set for them locally, and any child threads of theirs will be the same, and so on.
      */
     protected val localSide = InheritableThreadLocal<Side>()
+    private val executionQueue = ConcurrentLinkedDeque<Runnable>()
 
     fun getSide(): Side = localSide.get()
+
+    override fun execute(command: Runnable) {
+        executionQueue.push(command)
+    }
+
+    fun flushTasks() {
+        while (executionQueue.isNotEmpty())
+            executionQueue.pop().run()
+    }
 
     open fun init() {
         ModLoader.loadAllMods()
