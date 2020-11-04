@@ -66,7 +66,7 @@ class ZerraClient private constructor() : Zerra() {
         textureManager.load()
 
         println(MasterResourceManager.getAllResourceLocations())
-        println(MasterResourceManager.getAllResourceLocations("test"))
+        println(MasterResourceManager.getAllResourceLocations("textures/preload") { it.endsWith(".json") })
 
         MasterResourceManager.createResourceLocation("")
 
