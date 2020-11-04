@@ -18,7 +18,8 @@ class TextureManager(private val resourceManager: ResourceManager) : NativeResou
     }
 
     override fun free() {
-
+        textures.values.forEach(NativeResource::free)
+        textures.clear()
     }
 
     // TODO make async
@@ -36,7 +37,7 @@ class TextureManager(private val resourceManager: ResourceManager) : NativeResou
                 logger.error("Failed to load preloaded textures from $it", e)
             }
         }
-        CompletableFuture.allOf(*textures.values.stream().map(Texture::s).toArray { size -> arrayOfNulls<CompletableFuture<Void>>(size) }).join()
+        CompletableFuture.allOf(*textures.values.stream().map { it.load(resourceManager, this) }.toArray { size -> arrayOfNulls<CompletableFuture<Void>>(size) }).join()
     }
 
     companion object {
