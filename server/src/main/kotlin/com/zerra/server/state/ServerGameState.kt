@@ -17,6 +17,6 @@ class ServerGameState: GameState() {
     }
 
     override fun dispose() {
-        // TODO
+        universe.unload()
     }
 }
