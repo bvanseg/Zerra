@@ -1,6 +1,5 @@
 package com.zerra.client.vertex
 
-import com.zerra.client.ZerraClient
 import com.zerra.client.util.HardwareConstraints
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL33C.*
@@ -168,6 +167,14 @@ object VertexBuilder : NativeResource {
         glBindVertexArray(0)
 
         return this
+    }
+
+    fun compile(): VertexArray {
+        val vao = glGenVertexArrays()
+        val vbo = glGenBuffers()
+        val indicesVbo = glGenBuffers()
+        copy(vao, vbo, indicesVbo)
+        return VertexArray(vao, intArrayOf(vbo, indicesVbo), IntArray(segments.size) { it }, vertexCount, indicesType)
     }
 
     fun copy(vao: Int, vbo: Int, indicesVbo: Int = -1, attributeOffset: Int = 0): VertexBuilder {
