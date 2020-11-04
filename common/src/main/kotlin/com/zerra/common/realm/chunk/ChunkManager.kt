@@ -2,19 +2,17 @@ package com.zerra.common.realm.chunk
 
 import com.zerra.common.Zerra
 import com.zerra.common.entity.Entity
+import com.zerra.common.network.Side
 import com.zerra.common.realm.Realm
-import com.zerra.common.state.GameState
 import com.zerra.common.util.storage.FileManager
 import com.zerra.common.util.storage.UBJ
 import org.joml.Vector3i
 import org.joml.Vector3ic
-import java.io.File
 import java.io.FileOutputStream
-import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 
 internal class ChunkManager(val realm: Realm) {
-    internal val chunks = ConcurrentHashMap<Vector3ic, Chunk>()
+    internal val loadedChunks = ConcurrentHashMap<Vector3ic, Chunk>()
 
     fun loadChunk(posX: Int, posY: Int, posZ: Int) {
 
@@ -23,7 +21,8 @@ internal class ChunkManager(val realm: Realm) {
     fun unloadChunk(posX: Int, posY: Int, posZ: Int) = unloadChunk(Vector3i(posX, posY, posZ))
 
     fun unloadChunk(pos: Vector3ic, entities: List<Entity>? = emptyList()) {
-        val chunk = chunks[pos] ?: return
+        if(Zerra.getInstance().getSide() == Side.CLIENT) throw IllegalAccessException("Illegal access: Can not unload chunks client-side!")
+        val chunk = loadedChunks[pos] ?: return
 
         if(chunk.isDirty) {
             val chunkData = chunk.write()
@@ -56,6 +55,6 @@ internal class ChunkManager(val realm: Realm) {
             }
         }
 
-        chunks.remove(pos)
+        loadedChunks.remove(pos)
     }
 }

@@ -1,7 +1,9 @@
 package com.zerra.common.realm
 
+import com.zerra.common.Zerra
 import com.zerra.common.entity.Entity
 import com.zerra.common.entity.EntityManager
+import com.zerra.common.network.Side
 import com.zerra.common.realm.chunk.ChunkManager
 import org.joml.Vector3ic
 
@@ -27,22 +29,30 @@ class Realm internal constructor(val name: String) {
     }
 
     fun unload() {
-        val entitiesPerChunkPos = hashMapOf<Vector3ic, MutableList<Entity>>()
-
-        entityManager.loadedEntities.forEach { (uuid, entity) ->
-            val chunkPos = entity.getChunkPosition()
-
-            if(entitiesPerChunkPos[chunkPos] == null) {
-                entitiesPerChunkPos[chunkPos] = mutableListOf()
+        when(Zerra.getInstance().getSide()) {
+            Side.CLIENT -> {
+                entityManager.loadedEntities.clear()
+                chunkManager.loadedChunks.clear()
             }
+            Side.SERVER -> {
+                val entitiesPerChunkPos = hashMapOf<Vector3ic, MutableList<Entity>>()
 
-            entitiesPerChunkPos[chunkPos]!!.add(entity)
-        }
+                entityManager.loadedEntities.forEach { (uuid, entity) ->
+                    val chunkPos = entity.getChunkPosition()
 
-        chunkManager.chunks.forEach { (chunkPos, chunk) ->
-            val entities = entitiesPerChunkPos[chunkPos]
+                    if(entitiesPerChunkPos[chunkPos] == null) {
+                        entitiesPerChunkPos[chunkPos] = mutableListOf()
+                    }
 
-            chunkManager.unloadChunk(chunkPos, entities)
+                    entitiesPerChunkPos[chunkPos]!!.add(entity)
+                }
+
+                chunkManager.loadedChunks.forEach { (chunkPos, chunk) ->
+                    val entities = entitiesPerChunkPos[chunkPos]
+
+                    chunkManager.unloadChunk(chunkPos, entities)
+                }
+            }
         }
     }
 }
