@@ -1,6 +1,7 @@
 package com.zerra.common.realm
 
 import com.zerra.common.entity.EntityManager
+import com.zerra.common.realm.chunk.ChunkManager
 
 /**
  * @author Boston Vanseghi
@@ -10,6 +11,7 @@ class Realm internal constructor(val name: String) {
 
     var ticksExisted: Long = 0
     private val entityManager = EntityManager(this)
+    private val chunkManager = ChunkManager(this)
 
     fun update() {
         ticksExisted++
@@ -19,10 +21,10 @@ class Realm internal constructor(val name: String) {
     }
 
     fun load() {
-        // TODO
+        // TODO load chunks around all players
     }
 
     fun unload() {
-        // TODO
+        // TODO load chunks around all players
     }
 }
