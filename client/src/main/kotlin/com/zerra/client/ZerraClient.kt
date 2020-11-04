@@ -10,6 +10,7 @@ import com.zerra.client.vertex.VertexBuilder
 import com.zerra.common.Zerra
 import com.zerra.common.api.state.StateManager
 import com.zerra.common.network.Side
+import com.zerra.common.util.resource.MasterResourceManager
 import org.lwjgl.opengl.GL33C
 
 /**
@@ -63,6 +64,14 @@ class ZerraClient private constructor() : Zerra() {
         GameWindow.setVsync(true)
 
         textureManager.load()
+
+        println(MasterResourceManager.getAllResourceLocations())
+        println(MasterResourceManager.getAllResourceLocations("test"))
+
+        MasterResourceManager.createResourceLocation("")
+
+//        println(MasterResourceManager.getAllResourceLocations())
+//        println(getResourceManager().getResourceLocations(getResourceManager().createResourceLocation("shaders")))
     }
 
     override fun cleanup() {
