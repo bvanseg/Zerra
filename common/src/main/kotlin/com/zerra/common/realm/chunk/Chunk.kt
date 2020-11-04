@@ -20,7 +20,10 @@ class Chunk(val realm: Realm, val posX: Int, val posY: Int, val posZ: Int): Stor
         const val CHUNK_SIZE = 16 * 16 * 16
     }
 
-    private val changes by lazy { ConcurrentHashMap<Vector3ic, Block>() }
+    @Volatile
+    var isDirty = false
+    
+    private val changes by lazy { ConcurrentHashMap<Vector3ic, Block>() } // TODO: Store BlockState, not Block
     private val blockStates = Array(CHUNK_SIZE) { Blocks.AIR } // TODO: Store BlockState, not Block
 
     fun getBlockState(x: Int, y: Int, z: Int) = blockStates[x + y * 16 + z * 256]
@@ -31,6 +34,10 @@ class Chunk(val realm: Realm, val posX: Int, val posY: Int, val posZ: Int): Stor
 
         changes[Vector3i(x, y, z)] = blockState
         blockStates[x + y * 16 + z * 256]
+
+        if(!isDirty) {
+            isDirty = true
+        }
     }
 
     override fun hashCode(): Int = HashCodeBuilder(this::class).append(realm).append(posX).append(posY).append(posZ).hashCode()
@@ -60,7 +67,7 @@ class Chunk(val realm: Realm, val posX: Int, val posY: Int, val posZ: Int): Stor
         }
     }
 
-    override fun write(): UBJ {
+    override fun write(): UBJ = synchronized(blockStates) {
         val ubj = UBJ()
 
         val posData = ByteArray(changes.size * 3)
@@ -75,6 +82,7 @@ class Chunk(val realm: Realm, val posX: Int, val posY: Int, val posZ: Int): Stor
             posData[posIndex + 1] = pos.y().toByte()
             posData[posIndex + 2] = pos.z().toByte()
 
+            // TODO:
             // blockData[blockIndex] = block.hashCode()
             // blockStateData[blockStateIndex] = block.hashCode()
 
@@ -100,4 +108,7 @@ class Chunk(val realm: Realm, val posX: Int, val posY: Int, val posZ: Int): Stor
 
         return true
     }
+
+    fun toSimpleString(): String = "$posX.$posY.$posZ"
+    fun toQualifiedString(): String = "${realm.name}_$posX.$posY.$posZ"
 }
