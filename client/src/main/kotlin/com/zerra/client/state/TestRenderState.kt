@@ -22,7 +22,8 @@ class TestRenderState(private val textureManager: TextureManager, resourceManage
     override fun render(partialTicks: Float) {
         testShader.use {
             testShader.loadMatrix4f("projection", Matrix4f().perspective(45f, GameWindow.framebufferWidth.toFloat() / GameWindow.framebufferHeight.toFloat(), 0.3f, 10000.0f))
-            testShader.loadMatrix4f("transformation", TransformationHelper.get().translate(0f, 0f, -1f).rotate((test + partialTicks).toDouble(), 0f, 1f, 0f).value())
+            testShader.loadMatrix4f("transformation", TransformationHelper.get().translate(0f, 0f, -1f).rotate((test + partialTicks).toDouble() / 5, 0f, 1f, 0f).value())
+            testShader.loadFloat("counter", test + partialTicks)
 
             textureManager.bind(testTextureLocation)
             vao?.render()
