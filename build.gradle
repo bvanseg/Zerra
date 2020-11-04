@@ -45,9 +45,9 @@ subprojects {
         // https://mvnrepository.com/artifact/io.github.classgraph/classgraph
         compile group: 'io.github.classgraph', name: 'classgraph', version: '4.8.90'
 
-
         implementation 'com.github.bvanseg:kotlincommons:2.7.0-alpha3'
         implementation "org.joml:joml:$project.jomlVersion"
+        implementation 'com.google.code.gson:gson:2.8.6'
     }
 
     repositories {
