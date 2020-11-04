@@ -4,7 +4,7 @@ import com.zerra.common.api.state.State
 import com.zerra.common.api.state.StateManager
 
 interface ClientState: State {
-    fun render()
+    fun render(partialTicks: Float)
 }
 
 /**

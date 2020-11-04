@@ -14,12 +14,14 @@ object VertexBuilder : NativeResource {
     private var dataBuffer = BufferUtils.createByteBuffer(256)
     private var indicesBuffer = BufferUtils.createByteBuffer(256)
     private var currentType = -1
+    private var vertexSize = -1
     private var vao = -1
     private var vbo = -1
     private var indicesVbo = -1
 
     var indicesType = -1
         private set
+    var vertexCount = 0
 
     private fun getName(type: Int): String {
         return when (type) {
@@ -91,6 +93,8 @@ object VertexBuilder : NativeResource {
     fun reset(): VertexBuilder {
         currentType = -1
         indicesType = -1
+        vertexCount = 0
+        vertexSize = -1
         segments.clear()
         dataBuffer.clear()
         indicesBuffer.clear()
@@ -98,6 +102,8 @@ object VertexBuilder : NativeResource {
     }
 
     fun segment(type: Int, dataSize: Byte): VertexBuilder {
+        if (dataSize <= 0)
+            throw IllegalArgumentException("Data size must be greater than zero")
         if (segments.size + 1 > HardwareConstraints.maxVertexAttributes)
             throw IllegalArgumentException("Maximum vertex attributes ${HardwareConstraints.maxVertexAttributes} exceeded")
 
@@ -106,10 +112,15 @@ object VertexBuilder : NativeResource {
         return this
     }
 
-    fun put(vararg data: Number): VertexBuilder {
+    fun put(vararg data: Number, vertexData: Boolean = false): VertexBuilder {
         if (currentType == -1)
             throw IllegalStateException("No Segments specified")
         data.forEach(this::put)
+        if (vertexData && vertexSize != 0) {
+            if (vertexSize == -1)
+                vertexSize = segments[segments.size - 1].dataSize.toInt()
+            vertexCount += data.size
+        }
         return this
     }
 
@@ -119,11 +130,19 @@ object VertexBuilder : NativeResource {
         if (indicesType == GL_FLOAT || indicesType == GL_DOUBLE)
             throw IllegalArgumentException("Indices can only be ${getName(GL_FLOAT)} or ${getName(GL_DOUBLE)}")
         indicesType = type
+        if (vertexSize > 0) {
+            vertexCount = 0
+            vertexSize = 0
+        }
+        vertexCount += data.size
         data.forEach(this::putIndex)
         return this
     }
 
-    fun render(count: Int, mode: Int = GL_TRIANGLES, offset: Int = 0): VertexBuilder {
+    fun render(mode: Int = GL_TRIANGLES): VertexBuilder {
+        if (vertexSize == -1)
+            throw IllegalStateException("No vertex count specified")
+
         val useIndices = indicesBuffer.position() > 0
         if (vao == -1)
             vao = glGenVertexArrays()
@@ -139,9 +158,9 @@ object VertexBuilder : NativeResource {
             glEnableVertexAttribArray(i)
 
         if (useIndices) {
-            glDrawElements(mode, count, indicesType, 0L)
+            glDrawElements(mode, vertexCount, indicesType, 0L)
         } else {
-            glDrawArrays(mode, offset, count)
+            glDrawArrays(mode, 0, vertexCount / vertexSize)
         }
 
         for (i in segments.indices)
@@ -162,15 +181,12 @@ object VertexBuilder : NativeResource {
         for (i in segments.indices) {
             val segment = segments[i]
             glVertexAttribPointer(attributeOffset + i, segment.dataSize.toInt(), segment.type, false, 0, segment.position.toLong())
-            ZerraClient.printOpenGLError()
         }
-        ZerraClient.printOpenGLError()
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         if (indicesVbo != -1) {
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesVbo)
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_DYNAMIC_DRAW)
         }
-        ZerraClient.printOpenGLError()
 
         glBindVertexArray(0)
         return this

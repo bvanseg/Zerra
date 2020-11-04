@@ -1,5 +1,6 @@
 package com.zerra.client
 
+import bvanseg.kotlincommons.comparable.clamp
 import com.zerra.client.render.GameWindow
 import org.lwjgl.opengl.GL33C.*
 
@@ -36,7 +37,7 @@ fun main() {
                 GameWindow.setTitle("$title | ${1000000000 / loopTime} FPS | ${loopTime}ns")
         }
 
-        client.render()
+        client.render(clamp(delta, 0.0, 1.0).toFloat())
         GameWindow.update()
 
         loopTime = System.nanoTime() - loopStart

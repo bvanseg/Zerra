@@ -21,7 +21,7 @@ class ClientGameState: GameState(), ClientState {
 
     }
 
-    override fun render() {
+    override fun render(partialTicks: Float) {
 
         // TODO: Render active realm here.
 
