@@ -8,5 +8,5 @@ import com.zerra.common.realm.Universe
  * @since 0.0.1
  */
 abstract class GameState: State {
-    val universe = Universe()
+    val universe = Universe("NULL")
 }

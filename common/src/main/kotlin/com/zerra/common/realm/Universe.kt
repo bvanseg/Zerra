@@ -6,10 +6,10 @@ package com.zerra.common.realm
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-class Universe internal constructor() {
+class Universe internal constructor(val name: String) {
 
     var ticksExisted: Long = 0
-    val realmManager = RealmManager()
+    private val realmManager = RealmManager()
 
     fun update() {
         realmManager.loadedRealms.forEach {
