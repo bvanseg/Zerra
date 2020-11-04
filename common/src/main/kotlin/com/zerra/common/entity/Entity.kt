@@ -1,8 +1,11 @@
 package com.zerra.common.entity
 
+import com.zerra.common.realm.chunk.Chunk
 import com.zerra.common.util.storage.Storable
 import com.zerra.common.util.storage.UBJ
 import org.joml.Vector3f
+import org.joml.Vector3i
+import org.joml.Vector3ic
 import java.util.*
 
 /**
@@ -20,6 +23,10 @@ abstract class Entity: Storable {
 
     fun update() {
         ticksExisted++
+    }
+
+    fun getChunkPosition(): Vector3ic = position.let {
+        Vector3i(it.x.toInt() % Chunk.CHUNK_SIZE, it.y.toInt() % Chunk.CHUNK_SIZE, it.z.toInt() % Chunk.CHUNK_SIZE)
     }
 
     override fun read(ubj: UBJ) {

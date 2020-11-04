@@ -22,7 +22,7 @@ class Chunk(val realm: Realm, val posX: Int, val posY: Int, val posZ: Int): Stor
 
     @Volatile
     var isDirty = false
-    
+
     private val changes by lazy { ConcurrentHashMap<Vector3ic, Block>() } // TODO: Store BlockState, not Block
     private val blockStates = Array(CHUNK_SIZE) { Blocks.AIR } // TODO: Store BlockState, not Block
 

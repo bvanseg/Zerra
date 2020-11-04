@@ -38,4 +38,6 @@ internal object FileManager {
 
         return SAVES_DIR.resolve(universe.name)
     }
+
+    fun getSaveDataFolder(): Path = getCurrentSaveFolder().resolve("data")
 }

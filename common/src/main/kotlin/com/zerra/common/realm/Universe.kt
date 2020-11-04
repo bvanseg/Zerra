@@ -17,4 +17,14 @@ class Universe internal constructor(val name: String) {
         }
         ticksExisted++
     }
+
+    fun save() {
+        realmManager.loadedRealms.forEach {
+            it.unload()
+        }
+    }
+
+    fun load() {
+
+    }
 }
