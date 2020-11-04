@@ -1,5 +1,7 @@
 package com.zerra.common.realm
 
+import com.zerra.common.Zerra
+
 /**
  * Represents the entirety of all that exists within the game.
  *
@@ -18,13 +20,17 @@ class Universe internal constructor(val name: String) {
         ticksExisted++
     }
 
-    fun save() {
+    fun load() {
+
+    }
+
+    fun unload() {
+        val logger = Zerra.getInstance().logger
+        logger.info("Saving universe...")
+        val start = System.currentTimeMillis()
         realmManager.loadedRealms.forEach {
             it.unload()
         }
-    }
-
-    fun load() {
-
+        logger.info("Finished saving universe in ${System.currentTimeMillis() - start}ms.")
     }
 }
