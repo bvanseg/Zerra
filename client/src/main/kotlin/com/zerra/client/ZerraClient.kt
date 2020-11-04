@@ -76,6 +76,7 @@ class ZerraClient private constructor() : Zerra() {
 
     override fun cleanup() {
         ClientStateManager.activeState.dispose()
+        textureManager.free()
         VertexBuilder.free()
     }
 
