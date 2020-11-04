@@ -1,5 +1,6 @@
 package com.zerra.common
 
+import bvanseg.kotlincommons.any.getLogger
 import com.zerra.common.api.event.ModInitializationEvent
 import com.zerra.common.api.mod.ModLoader
 import com.zerra.common.api.registry.RegistryManager
@@ -29,6 +30,8 @@ abstract class Zerra {
             return zerraInstance!!
         }
     }
+
+    val logger = getLogger()
 
     /**
      * Stores the side within the current thread. When this variable is set during the initialization of the
