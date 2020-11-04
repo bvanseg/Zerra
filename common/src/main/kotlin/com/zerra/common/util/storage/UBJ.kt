@@ -1,10 +1,7 @@
 package com.zerra.common.util.storage
 
 import bvanseg.kotlincommons.any.getLogger
-import com.devsmart.ubjson.UBObject
-import com.devsmart.ubjson.UBReader
-import com.devsmart.ubjson.UBValueFactory
-import com.devsmart.ubjson.UBWriter
+import com.devsmart.ubjson.*
 import com.zerra.common.util.toArray
 import org.joml.*
 import java.io.ByteArrayInputStream
@@ -25,6 +22,15 @@ class UBJ(initUBO: UBObject? = null) {
     }
 
     private val ubo: UBObject = initUBO ?: UBValueFactory.createObject()
+
+    val entries: Set<Map.Entry<String, UBValue>>
+        get() = ubo.entries
+
+    val keys: Set<String>
+        get() = ubo.keys
+
+    val values: Collection<UBValue>
+        get() = ubo.values
 
     operator fun set(key: String, value: Any?) {
         if (value == null) {
