@@ -21,6 +21,6 @@ open class ResourceManager(val root: String, val domain: String) {
     }
 
     fun getResourceLocations(location: String): Collection<ResourceLocation> {
-        return MasterResourceManager.resources.allResources.filter { it.path.startsWith("$root$domain/") && it.path.substring(root.length + domain.length + 1).startsWith("$location/") }.map { ResourceLocation(this, domain, it.path.substring(root.length + domain.length + 1)) }
+        return MasterResourceManager.resources.allResources.filter { it.path.startsWith("$root$domain/") && it.path.substring(root.length + domain.length + 1).startsWith(location) }.map { ResourceLocation(this, domain, it.path.substring(root.length + domain.length + 1)) }
     }
 }
