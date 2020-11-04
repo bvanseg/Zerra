@@ -70,12 +70,12 @@ class ZerraClient private constructor() : Zerra() {
         VertexBuilder.free()
     }
 
-    fun render() {
+    fun render(partialTicks: Float) {
         printOpenGLError()
 
         val state = ClientStateManager.activeState
         if (state is ClientState) {
-            state.render()
+            state.render(partialTicks)
         }
     }
 
