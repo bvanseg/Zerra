@@ -18,14 +18,23 @@ class LoadingState(private val completeCallback: () -> Unit) : ClientState {
 
     private val testShader = ShaderManager.getShader(MasterResourceManager.createResourceLocation("quad"))
     private val testTextureLocation = MasterResourceManager.createResourceLocation("textures/loading.png")
-    private var vao: VertexArray? = null
+    private val vao: VertexArray
 
     private var loadingTask: CompletableFuture<Void> = CompletableFuture.completedFuture(null)
+
+    init {
+        VertexBuilder.reset().segment(GL_FLOAT, 2)
+        VertexBuilder.put(0, 0, 0, 1, 1, 1, 1, 0, vertexData = true)
+        VertexBuilder.segment(GL_FLOAT, 2)
+        VertexBuilder.put(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f)
+        VertexBuilder.indices(2, 1, 0, 3, 2, 0)
+        vao = VertexBuilder.compile()
+    }
 
     override fun render(partialTicks: Float) {
         testShader.use {
             TextureManager.bind(testTextureLocation)
-            vao?.render()
+            vao.render()
         }
     }
 
@@ -34,13 +43,6 @@ class LoadingState(private val completeCallback: () -> Unit) : ClientState {
             testShader.loadMatrix4f("projection", Matrix4f().ortho(0f, 1f, 0f, 1f, 0.3f, 1000.0f))
             testShader.loadMatrix4f("transformation", Matrix4f())
         }
-
-        VertexBuilder.reset().segment(GL_FLOAT, 2)
-        VertexBuilder.put(0, 0, 0, 1, 1, 1, 1, 0, vertexData = true)
-        VertexBuilder.segment(GL_FLOAT, 2)
-        VertexBuilder.put(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f)
-        VertexBuilder.indices(2, 1, 0, 3, 2, 0)
-        vao = VertexBuilder.compile()
 
         loadingTask = ZerraClient.getInstance().reload({
             GlobalScope.launch {
@@ -57,7 +59,7 @@ class LoadingState(private val completeCallback: () -> Unit) : ClientState {
     }
 
     override fun dispose() {
-        vao?.free()
+        vao.free()
     }
 
     companion object {
