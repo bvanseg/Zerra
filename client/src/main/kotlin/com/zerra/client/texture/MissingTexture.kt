@@ -1,16 +1,17 @@
 package com.zerra.client.texture
 
+import com.zerra.common.util.Reloadable
+import com.zerra.common.util.resource.MasterResourceManager
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11C.*
 import java.nio.ByteBuffer
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
 
-object MissingTexture : Texture {
+object MissingTexture : SimpleTexture(MasterResourceManager.createResourceLocation("missing")) {
 
     const val width = 16
     const val height = 16
-    private var texture = -1
 
     fun createData(): ByteBuffer {
         val buffer = BufferUtils.createByteBuffer(768)
@@ -27,7 +28,7 @@ object MissingTexture : Texture {
     }
 
     override fun bind() {
-        if (texture == -1) {
+        if (texture == 0) {
             texture = glGenTextures()
             glBindTexture(GL_TEXTURE_2D, texture)
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
@@ -40,12 +41,5 @@ object MissingTexture : Texture {
 
     override fun reload(backgroundExecutor: Executor, mainExecutor: Executor): CompletableFuture<*> {
         return CompletableFuture.completedFuture(null)
-    }
-
-    override fun free() {
-        if (texture != -1) {
-            glDeleteTextures(texture)
-            texture = -1
-        }
     }
 }

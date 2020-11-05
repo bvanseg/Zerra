@@ -1,21 +1,19 @@
 package com.zerra.client.state
 
 import com.zerra.client.render.GameWindow
-import com.zerra.client.shader.Shader
+import com.zerra.client.shader.ShaderManager
 import com.zerra.client.texture.TextureManager
 import com.zerra.client.vertex.VertexArray
 import com.zerra.client.vertex.VertexBuilder
 import com.zerra.common.util.TransformationHelper
 import com.zerra.common.util.resource.MasterResourceManager
-import com.zerra.common.util.resource.ResourceLocation
-import com.zerra.common.util.resource.ResourceManager
 import org.joml.Matrix4f
 import org.lwjgl.opengl.GL33C.*
 
 class TestRenderState : ClientState {
 
     private val resourceManager = MasterResourceManager.getResourceManager("zerra")!!
-    private val testShader = Shader(ResourceLocation(resourceManager, "zerra", "test"))
+    private val testShader = ShaderManager.getShader(resourceManager.createResourceLocation("test"))
     private val testTextureLocation = resourceManager.createResourceLocation("textures/b5fca2fe-313d-4d53-a16a-6c856c7da7e3.jpg")
     private var vao: VertexArray? = null
     private var test = 0
@@ -38,8 +36,6 @@ class TestRenderState : ClientState {
     }
 
     override fun init() {
-        testShader.load()
-
         VertexBuilder.reset().segment(GL_FLOAT, 2)
         VertexBuilder.put(-0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, -0.5f, vertexData = true)
         VertexBuilder.segment(GL_FLOAT, 3)
@@ -55,7 +51,6 @@ class TestRenderState : ClientState {
     }
 
     override fun dispose() {
-        testShader.free()
         vao?.free()
     }
 }

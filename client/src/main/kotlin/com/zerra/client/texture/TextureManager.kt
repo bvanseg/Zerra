@@ -20,17 +20,29 @@ object TextureManager : Reloadable, NativeResource {
     private val textures = HashMap<ResourceLocation, Texture>()
     private val mainTextures = arrayOf(MasterResourceManager.createResourceLocation("textures/loading.png"))
 
-    private fun preload(location: ResourceLocation, mainExecutor: Executor): CompletableFuture<Void> {
-        return CompletableFuture.allOf(CompletableFuture.runAsync({ textures[location] = SimpleTexture(location) }, mainExecutor))
+    private fun preload(location: ResourceLocation, mainExecutor: Executor): CompletableFuture<*> {
+        return CompletableFuture.runAsync({ textures[location] = SimpleTexture(location) }, mainExecutor)
     }
 
-    private fun reloadTextures(reloadMain: Boolean, backgroundExecutor: Executor, mainExecutor: Executor): CompletableFuture<Void> {
+    private fun reloadTextures(reloadMain: Boolean, backgroundExecutor: Executor, mainExecutor: Executor): CompletableFuture<*> {
         return CompletableFuture.allOf(*textures.entries.stream().filter { reloadMain || !mainTextures.contains(it.key) }.map { it.value.reload(backgroundExecutor, mainExecutor) }.toList().toTypedArray())
     }
 
-    internal fun load(backgroundExecutor: Executor, mainExecutor: Executor): CompletableFuture<Void> {
+    internal fun load(backgroundExecutor: Executor, mainExecutor: Executor): CompletableFuture<*> {
         return CompletableFuture.allOf(CompletableFuture.allOf(*mainTextures.stream().map { preload(ResourceLocation(it), backgroundExecutor) }.toList().toTypedArray()))
-            .whenComplete { _, _ -> reloadTextures(true, backgroundExecutor, mainExecutor) }
+            .whenCompleteAsync({ _, _ -> reloadTextures(true, backgroundExecutor, mainExecutor) }, backgroundExecutor)
+    }
+
+    fun loadTexture(location: ResourceLocation, texture: Texture) {
+        textures[location]?.free()
+        texture.reload(Runnable::run, Runnable::run).join()
+        textures[location] = texture
+    }
+
+    fun bind(location: ResourceLocation) {
+        if (!textures.containsKey(location))
+            loadTexture(location, SimpleTexture(location))
+        textures[location]?.bind()
     }
 
     override fun reload(backgroundExecutor: Executor, mainExecutor: Executor): CompletableFuture<*> {
@@ -52,26 +64,18 @@ object TextureManager : Reloadable, NativeResource {
                 return@map null
             }.filter(Objects::nonNull).distinct()
         }, backgroundExecutor)
-            .whenComplete { it, _ -> CompletableFuture.allOf(*it.map { location -> preload(location!!, backgroundExecutor) }.toList().toTypedArray())
-                .whenComplete { _, _ -> reloadTextures(false, backgroundExecutor, mainExecutor)
-                    .thenRunAsync({ logger.debug("Loaded preloaded textures") }, mainExecutor) } }
+            .whenCompleteAsync({ it, _ ->
+                CompletableFuture.allOf(*it.map { location -> preload(location!!, backgroundExecutor) }.toList().toTypedArray())
+                    .whenCompleteAsync({ _, _ ->
+                        reloadTextures(false, backgroundExecutor, mainExecutor)
+                            .thenRunAsync({ logger.debug("Loaded preloaded textures") }, mainExecutor)
+                    }, backgroundExecutor)
+            }, backgroundExecutor)
     }
 
     override fun free() {
         MissingTexture.free()
         textures.values.forEach(NativeResource::free)
         textures.clear()
-    }
-
-    fun loadTexture(location: ResourceLocation, texture: Texture) {
-        textures[location]?.free()
-        texture.reload(Runnable::run, Runnable::run).join()
-        textures[location] = texture
-    }
-
-    fun bind(location: ResourceLocation) {
-        if (!textures.containsKey(location))
-            loadTexture(location, SimpleTexture(location))
-        textures[location]?.bind()
     }
 }

@@ -5,9 +5,9 @@ import com.zerra.common.api.mod.ModLoader
 import com.zerra.common.api.registry.RegistryManager
 import com.zerra.common.api.state.StateManager
 import com.zerra.common.network.Side
+import com.zerra.common.util.Reloadable
 import com.zerra.common.util.resource.MasterResourceManager
 import com.zerra.common.util.resource.ResourceManager
-import java.util.*
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.Executor
 
@@ -52,6 +52,8 @@ abstract class Zerra : Executor {
         while (executionQueue.isNotEmpty())
             executionQueue.pop().run()
     }
+
+    fun getRemainingTasks() = executionQueue.size
 
     open fun init() {
         ModLoader.loadAllMods()

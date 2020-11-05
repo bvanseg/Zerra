@@ -2,6 +2,7 @@ package com.zerra.client
 
 import bvanseg.kotlincommons.any.getLogger
 import com.zerra.client.render.GameWindow
+import com.zerra.client.shader.ShaderManager
 import com.zerra.client.state.ClientState
 import com.zerra.client.state.ClientStateManager
 import com.zerra.client.state.LoadingState
@@ -68,12 +69,17 @@ class ZerraClient private constructor() : Zerra(), Reloadable {
         glClearColor(1f, 1f, 1f, 1f)
 
         // Initial load, no async
-        TextureManager.load(Runnable::run, Runnable::run).join()
+        CompletableFuture.allOf(
+            TextureManager.load(Runnable::run, Runnable::run),
+            ShaderManager.load(Runnable::run, Runnable::run)
+        ).join()
+        logger.info("Finished initial loading")
     }
 
     override fun cleanup() {
         ClientStateManager.activeState.dispose()
         TextureManager.free()
+        ShaderManager.free()
         VertexBuilder.free()
     }
 
@@ -101,6 +107,9 @@ class ZerraClient private constructor() : Zerra(), Reloadable {
 
     // TODO add ability for mods to add reloading resources
     override fun reload(backgroundExecutor: Executor, mainExecutor: Executor): CompletableFuture<Void> {
-        return CompletableFuture.allOf(TextureManager.reload(backgroundExecutor, mainExecutor))
+        return CompletableFuture.allOf(
+            TextureManager.reload(backgroundExecutor, mainExecutor),
+            ShaderManager.reload(backgroundExecutor, mainExecutor)
+        )
     }
 }

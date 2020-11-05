@@ -1,6 +1,7 @@
 package com.zerra.client.texture
 
 import bvanseg.kotlincommons.any.getLogger
+import com.zerra.common.util.Reloadable
 import com.zerra.common.util.resource.ResourceLocation
 import com.zerra.common.util.resource.ResourceManager
 import org.lwjgl.opengl.GL11C.*
@@ -9,7 +10,7 @@ import java.util.concurrent.Executor
 
 open class SimpleTexture(private val location: ResourceLocation) : Texture {
 
-    private var texture = -1
+    protected var texture = 0
 
     override fun reload(backgroundExecutor: Executor, mainExecutor: Executor): CompletableFuture<*> {
         return CompletableFuture.supplyAsync({
@@ -20,7 +21,7 @@ open class SimpleTexture(private val location: ResourceLocation) : Texture {
             }
             null
         }, backgroundExecutor).thenAcceptAsync({
-            if (texture == -1) {
+            if (texture == 0) {
                 texture = glGenTextures()
                 bind()
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
@@ -39,9 +40,9 @@ open class SimpleTexture(private val location: ResourceLocation) : Texture {
     }
 
     override fun free() {
-        if (texture != -1) {
+        if (texture != 0) {
             glDeleteTextures(texture)
-            texture = -1
+            texture = 0
         }
     }
 
