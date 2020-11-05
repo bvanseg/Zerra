@@ -44,7 +44,6 @@ class LoadingState(private val completeCallback: () -> Unit) : ClientState {
 
         loadingTask = ZerraClient.getInstance().reload({
             GlobalScope.launch {
-                delay(1000)
                 it.run()
             }
         }, ZerraClient.getInstance())
