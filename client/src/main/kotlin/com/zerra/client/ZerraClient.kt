@@ -2,6 +2,7 @@ package com.zerra.client
 
 import bvanseg.kotlincommons.any.getLogger
 import com.zerra.client.render.GameWindow
+import com.zerra.client.state.ClientGameState
 import com.zerra.client.state.ClientState
 import com.zerra.client.state.ClientStateManager
 import com.zerra.client.state.TestRenderState
@@ -11,6 +12,7 @@ import com.zerra.common.Zerra
 import com.zerra.common.api.state.StateManager
 import com.zerra.common.network.Side
 import com.zerra.common.util.resource.MasterResourceManager
+import com.zerra.server.ZerraServer
 import org.lwjgl.opengl.GL33C
 
 /**
@@ -37,7 +39,10 @@ class ZerraClient private constructor() : Zerra() {
             if (instance == null) {
                 logger.info("Creating ZerraClient instance")
                 instance = ZerraClient()
-                zerraInstance = instance
+
+                if(zerraClientInstance == null) {
+                    zerraClientInstance = instance
+                }
             }
 
             return instance!!
@@ -69,9 +74,6 @@ class ZerraClient private constructor() : Zerra() {
         println(MasterResourceManager.getAllResourceLocations { it == "textures/preload.json" })
 
         MasterResourceManager.createResourceLocation("")
-
-//        println(MasterResourceManager.getAllResourceLocations())
-//        println(getResourceManager().getResourceLocations(getResourceManager().createResourceLocation("shaders")))
     }
 
     override fun cleanup() {
@@ -95,7 +97,7 @@ class ZerraClient private constructor() : Zerra() {
 
     override fun createGame() {
         logger.info("Creating new game")
-//        ClientStateManager.setState(ClientGameState()) TODO temporary
+//        ClientStateManager.setState(ClientGameState())
         ClientStateManager.setState(TestRenderState(textureManager, getResourceManager()))
     }
 

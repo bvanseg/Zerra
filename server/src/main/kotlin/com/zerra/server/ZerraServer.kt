@@ -29,8 +29,8 @@ class ZerraServer private constructor(): Zerra() {
             if(instance == null) {
                 instance = ZerraServer()
 
-                if(zerraInstance == null) {
-                    zerraInstance = instance
+                if(zerraServerInstance == null) {
+                    zerraServerInstance = instance
                 }
             }
 
@@ -42,15 +42,14 @@ class ZerraServer private constructor(): Zerra() {
         localSide.set(Side.SERVER)
     }
 
+    @Volatile
+    var isRunning = false
+
     override fun init() {
         logger.info("Starting up ZerraServer")
         ServerRegistryManager.ENTITY_REGISTRY.register(ServerEntityPlayer::class)
 
         initServer()
-
-        every((1000 / TICKS_PER_SECOND).milliseconds) {
-            this.update()
-        }.execute()
     }
 
     private fun initServer() {
@@ -60,6 +59,15 @@ class ZerraServer private constructor(): Zerra() {
     override fun createGame() {
         logger.info("Creating new game")
         ServerStateManager.setState(ServerGameState())
+
+        isRunning = true
+
+        every((1000 / TICKS_PER_SECOND).milliseconds) {
+            this.update()
+            if(!isRunning) {
+                it.stop()
+            }
+        }.execute()
     }
 
     override fun update() {
@@ -70,6 +78,6 @@ class ZerraServer private constructor(): Zerra() {
     override fun getRegistryManager(): RegistryManager = ServerRegistryManager
 
     override fun cleanup() {
-        // TODO
+        isRunning = false
     }
 }

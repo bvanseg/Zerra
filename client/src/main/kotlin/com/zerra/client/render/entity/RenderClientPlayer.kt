@@ -9,6 +9,6 @@ import com.zerra.client.entity.ClientEntityPlayer
 class RenderClientPlayer: RenderEntity<ClientEntityPlayer>() {
 
     override fun render(renderable: ClientEntityPlayer) {
-        TODO("Not yet implemented")
+        // TODO Not yet implemented
     }
 }

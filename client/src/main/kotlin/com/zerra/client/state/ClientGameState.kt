@@ -2,14 +2,20 @@ package com.zerra.client.state
 
 import com.zerra.client.entity.ClientEntityPlayer
 import com.zerra.client.render.GameRenderManager
+import com.zerra.common.Zerra
 import com.zerra.common.realm.Realm
 import com.zerra.common.state.GameState
+import com.zerra.server.ZerraServer
+import kotlin.concurrent.thread
 
 /**
  * @author Boston Vanseghi
  * @since 0.0.1
  */
 class ClientGameState: GameState(), ClientState {
+
+    private val internalServer: ZerraServer
+        get() = ZerraServer.getInstance()
 
     private val activeRealm: Realm? = null
 
@@ -37,6 +43,11 @@ class ClientGameState: GameState(), ClientState {
     }
 
     override fun dispose() {
+        internalServer.cleanup()
+    }
 
+    internal fun createInternalServer() = thread {
+        internalServer.init()
+        internalServer.createGame()
     }
 }

@@ -9,6 +9,10 @@ fun main() {
     client.init()
     client.createGame()
 
+    // Uncomment these to start an internal server.
+//    val state = client.getStateManager().activeState as ClientGameState
+//    state.createInternalServer()
+
     val nsPerTick = 1000000000 / 60
     var lastTime = System.nanoTime()
     var delta = 0.0

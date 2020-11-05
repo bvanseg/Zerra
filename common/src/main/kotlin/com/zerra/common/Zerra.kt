@@ -8,7 +8,6 @@ import com.zerra.common.api.state.StateManager
 import com.zerra.common.network.Side
 import com.zerra.common.util.resource.MasterResourceManager
 import com.zerra.common.util.resource.ResourceManager
-import java.util.*
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.Executor
 
@@ -23,14 +22,19 @@ abstract class Zerra : Executor {
     companion object {
         const val TICKS_PER_SECOND = 60
 
-        var zerraInstance: Zerra? = null
+        var zerraClientInstance: Zerra? = null
+        var zerraServerInstance: Zerra? = null
 
-        fun getInstance(): Zerra {
-            if (zerraInstance == null) {
-                throw IllegalStateException("Attempted to fetch Zerra instance when it was null!")
+        fun getInstance(): Zerra = zerraServerInstance ?: zerraClientInstance ?: throw Exception("Attempted to access Zerra instance while it was null!")
+
+        private var primaryResourceManager: ResourceManager? = null
+
+        fun getResourceManager(): ResourceManager {
+            if(primaryResourceManager == null) {
+                primaryResourceManager = MasterResourceManager.createResourceManager("assets/", "zerra")
             }
 
-            return zerraInstance!!
+            return primaryResourceManager!!
         }
     }
 
@@ -65,10 +69,6 @@ abstract class Zerra : Executor {
     abstract fun createGame()
 
     abstract fun update()
-
-    private val primaryResourceManager = MasterResourceManager.createResourceManager("assets/", "zerra")
-
-    fun getResourceManager(): ResourceManager = primaryResourceManager
 
     abstract fun getStateManager(): StateManager
     abstract fun getRegistryManager(): RegistryManager
