@@ -6,13 +6,15 @@ import com.zerra.client.texture.TextureManager
 import com.zerra.client.vertex.VertexArray
 import com.zerra.client.vertex.VertexBuilder
 import com.zerra.common.util.TransformationHelper
+import com.zerra.common.util.resource.MasterResourceManager
 import com.zerra.common.util.resource.ResourceLocation
 import com.zerra.common.util.resource.ResourceManager
 import org.joml.Matrix4f
 import org.lwjgl.opengl.GL33C.*
 
-class TestRenderState(private val textureManager: TextureManager, resourceManager: ResourceManager) : ClientState {
+class TestRenderState : ClientState {
 
+    private val resourceManager = MasterResourceManager.getResourceManager("zerra")!!
     private val testShader = Shader(ResourceLocation(resourceManager, "zerra", "test"))
     private val testTextureLocation = resourceManager.createResourceLocation("textures/b5fca2fe-313d-4d53-a16a-6c856c7da7e3.jpg")
     private var vao: VertexArray? = null
@@ -20,36 +22,23 @@ class TestRenderState(private val textureManager: TextureManager, resourceManage
 
     override fun render(partialTicks: Float) {
         for (i in 0 until 2) {
-            if(i == 1)
+            if (i == 1)
                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
             testShader.use {
                 testShader.loadMatrix4f("projection", Matrix4f().perspective(45f, GameWindow.framebufferWidth.toFloat() / GameWindow.framebufferHeight.toFloat(), 0.3f, 10000.0f))
                 testShader.loadMatrix4f("transformation", TransformationHelper.get().translate(-0.75f + i * 1.5f, 0f, -2f).rotate((test + partialTicks).toDouble() / 5, 0f, 1f, 0f).value())
                 testShader.loadFloat("counter", test + partialTicks)
 
-                textureManager.bind(testTextureLocation)
+                TextureManager.bind(testTextureLocation)
                 vao?.render()
             }
-            if(i == 1)
+            if (i == 1)
                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
         }
     }
 
     override fun init() {
         testShader.load()
-
-//        glBindVertexArray(vao)
-//
-//        glBindBuffer(GL_ARRAY_BUFFER, vbo1)
-//        glBufferData(GL_ARRAY_BUFFER, floatArrayOf(-0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f), GL_DYNAMIC_DRAW)
-//        glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0L)
-//        glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 8L * Float.SIZE_BYTES)
-//        glBindBuffer(GL_ARRAY_BUFFER, 0)
-//
-//        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo2)
-//        glBufferData(GL_ELEMENT_ARRAY_BUFFER, shortArrayOf(2, 1, 0, 3, 2, 0), GL_STATIC_DRAW)
-//
-//        glBindVertexArray(0)
 
         VertexBuilder.reset().segment(GL_FLOAT, 2)
         VertexBuilder.put(-0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, -0.5f, vertexData = true)
@@ -59,10 +48,6 @@ class TestRenderState(private val textureManager: TextureManager, resourceManage
         VertexBuilder.put(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f)
         VertexBuilder.indices(2, 1, 0, 3, 2, 0)
         vao = VertexBuilder.compile()
-
-//        glEnable(GL_CULL_FACE)
-//        glCullFace(GL_BACK)
-        glClearColor(1f, 1f, 1f, 1f)
     }
 
     override fun update() {

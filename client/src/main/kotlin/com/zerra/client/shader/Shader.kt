@@ -203,16 +203,15 @@ class Shader internal constructor(private val name: ResourceLocation) : Bindable
         private fun loadShader(shaderLocation: ResourceLocation): CharSequence? {
             if (!shaderLocation.resourceExists)
                 return null
-            return shaderLocation.inputStream!!.runCatching {
+            return shaderLocation.inputStream!!.use {
                 val out = ByteArrayOutputStream()
                 val buffer = ByteArray(1024)
                 var length: Int
-                while (this.read(buffer).also { length = it } >= 0) {
+                while (it.read(buffer).also { l -> length = l } >= 0)
                     out.write(buffer, 0, length)
-                }
 
                 out.toString(Charsets.UTF_8)
-            }.getOrNull()
+            }
         }
     }
 }
