@@ -66,11 +66,11 @@ object TextureManager : Reloadable, NativeResource {
         }, backgroundExecutor)
             .whenCompleteAsync({ it, _ ->
                 CompletableFuture.allOf(*it.map { location -> preload(location!!, backgroundExecutor) }.toList().toTypedArray())
-                    .whenCompleteAsync({ _, _ ->
-                        reloadTextures(false, backgroundExecutor, mainExecutor)
-                            .thenRunAsync({ logger.debug("Loaded preloaded textures") }, mainExecutor)
-                    }, backgroundExecutor)
             }, backgroundExecutor)
+            .whenCompleteAsync({ _, _ ->
+                reloadTextures(false, backgroundExecutor, mainExecutor)
+            }, backgroundExecutor)
+            .thenRunAsync({ logger.debug("Loaded preloaded textures") }, mainExecutor)
     }
 
     override fun free() {

@@ -8,6 +8,7 @@ import com.zerra.client.vertex.VertexArray
 import com.zerra.client.vertex.VertexBuilder
 import com.zerra.common.util.resource.MasterResourceManager
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.joml.Matrix4f
 import org.lwjgl.opengl.GL33C.GL_FLOAT
@@ -42,7 +43,10 @@ class LoadingState(private val completeCallback: () -> Unit) : ClientState {
         vao = VertexBuilder.compile()
 
         loadingTask = ZerraClient.getInstance().reload({
-            GlobalScope.launch { it.run() }
+            GlobalScope.launch {
+                delay(1000)
+                it.run()
+            }
         }, ZerraClient.getInstance())
     }
 

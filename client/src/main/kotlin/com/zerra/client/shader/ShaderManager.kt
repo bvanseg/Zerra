@@ -25,8 +25,8 @@ object ShaderManager : Reloadable, NativeResource {
     }
 
     internal fun load(backgroundExecutor: Executor, mainExecutor: Executor): CompletableFuture<*> {
-        return CompletableFuture.allOf(CompletableFuture.allOf(*mainShaders.stream().map { loadShader(ResourceLocation(it), backgroundExecutor) }.toList().toTypedArray()))
-            .whenCompleteAsync({ _, _ -> reloadShaders(true, backgroundExecutor, mainExecutor) }, backgroundExecutor)
+        return CompletableFuture.allOf(*mainShaders.stream().map { loadShader(ResourceLocation(it), backgroundExecutor) }.toList().toTypedArray())
+            .whenCompleteAsync({ _, _ -> reloadShaders(true, backgroundExecutor, mainExecutor) }, mainExecutor)
     }
 
     fun getShader(shaderLocation: ResourceLocation): Shader {
@@ -36,16 +36,17 @@ object ShaderManager : Reloadable, NativeResource {
     override fun reload(backgroundExecutor: Executor, mainExecutor: Executor): CompletableFuture<*> {
         return CompletableFuture.runAsync({
             shaders.entries.removeIf { !mainShaders.contains(it.key) }
-        }, mainExecutor).thenApplyAsync({
-            MasterResourceManager.getAllResourceLocations { it.startsWith("shaders/") }.map { it.resourceManager.createResourceLocation(it.location.substring(8, it.location.length - 10)) }.distinct()
-        }, backgroundExecutor)
+        }, mainExecutor)
+            .thenApplyAsync({
+                MasterResourceManager.getAllResourceLocations { it.startsWith("shaders/") && it.endsWith(".glsl") }.map { it.resourceManager.createResourceLocation(it.location.substring(8, it.location.length - 10)) }.filter { !mainShaders.contains(it) }.distinct()
+            }, backgroundExecutor)
             .whenCompleteAsync({ it, _ ->
-                CompletableFuture.allOf(*it.map { location -> loadShader(location, backgroundExecutor) }.toList().toTypedArray())
+                CompletableFuture.allOf(*it.map { location -> loadShader(location, mainExecutor) }.toList().toTypedArray())
                     .whenCompleteAsync({ _, _ ->
                         reloadShaders(false, backgroundExecutor, mainExecutor)
-                            .thenRunAsync({ logger.debug("Loaded shaders") }, mainExecutor)
-                    }, backgroundExecutor)
-            }, backgroundExecutor)
+                    }, mainExecutor)
+            }, mainExecutor)
+            .thenRunAsync({ logger.debug("Loaded shaders") }, mainExecutor)
     }
 
     override fun free() {
