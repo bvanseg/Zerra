@@ -14,7 +14,7 @@ class TestRenderState : ClientState {
 
     private val resourceManager = MasterResourceManager.getResourceManager("zerra")!!
     private val testShader = ShaderManager.getShader(resourceManager.createResourceLocation("test"))
-    private val testTextureLocation = resourceManager.createResourceLocation("textures/b5fca2fe-313d-4d53-a16a-6c856c7da7e3.jpg")
+    private val testTextureLocation = resourceManager.createResourceLocation("textures/aliencat.jpg")
     private var vao: VertexArray? = null
     private var test = 0
 

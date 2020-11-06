@@ -12,17 +12,15 @@ import com.zerra.client.vertex.VertexBuilder
 import com.zerra.common.Zerra
 import com.zerra.common.api.state.StateManager
 import com.zerra.common.network.Side
-import com.zerra.common.util.Reloadable
 import org.lwjgl.opengl.GL11C.glClearColor
 import org.lwjgl.opengl.GL33C
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Executor
 
 /**
  * @author Boston Vanseghi
  * @since 0.0.1
  */
-class ZerraClient private constructor() : Zerra(), Reloadable {
+class ZerraClient private constructor() : Zerra() {
 
     companion object {
         private var instance: ZerraClient? = null
@@ -51,6 +49,8 @@ class ZerraClient private constructor() : Zerra(), Reloadable {
 
     init {
         localSide.set(Side.CLIENT)
+        reloader.add(TextureManager)
+        reloader.add(ShaderManager)
     }
 
     override fun init() {
@@ -98,18 +98,11 @@ class ZerraClient private constructor() : Zerra(), Reloadable {
 
     override fun createGame() {
         logger.info("Creating new game")
-        ClientStateManager.setState(LoadingState { ClientStateManager.setState(TestRenderState()) }) // TODO temporary
+        ClientStateManager.setState(LoadingState(reloader) { ClientStateManager.setState(TestRenderState()) }) // TODO temporary
 //        ClientStateManager.setState(TestRenderState(textureManager, getResourceManager()))
     }
 
     override fun getStateManager(): StateManager = ClientStateManager
     override fun getRegistryManager(): ClientRegistryManager = ClientRegistryManager
 
-    // TODO add ability for mods to add reloading resources
-    override fun reload(backgroundExecutor: Executor, mainExecutor: Executor): CompletableFuture<Void> {
-        return CompletableFuture.allOf(
-            TextureManager.reload(backgroundExecutor, mainExecutor),
-            ShaderManager.reload(backgroundExecutor, mainExecutor)
-        )
-    }
 }

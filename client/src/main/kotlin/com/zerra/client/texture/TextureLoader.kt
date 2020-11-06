@@ -18,7 +18,7 @@ object TextureLoader {
 
     fun load(location: ResourceLocation, channels: Int = 4): ImageData {
         if (!location.resourceExists)
-            throw IOException("Failed to fine resource at $location")
+            throw IOException("Failed to find resource at $location")
         location.use {
             return load(it.inputStream!!, channels)
         }

@@ -1,7 +1,6 @@
 package com.zerra.client.shader
 
 import bvanseg.kotlincommons.any.getLogger
-import bvanseg.kotlincommons.stream.stream
 import com.zerra.client.util.Bindable
 import com.zerra.common.util.Reloadable
 import com.zerra.common.util.resource.MasterResourceManager
@@ -16,7 +15,6 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
 import kotlin.collections.HashMap
-import kotlin.streams.toList
 
 /**
  * @author Ocelot5836
@@ -66,33 +64,54 @@ class Shader internal constructor(private val name: ResourceLocation) : Bindable
         if (this == MISSING)
             return CompletableFuture.completedFuture(null)
         return CompletableFuture.runAsync(this::free, mainExecutor)
-            .whenCompleteAsync({ _, _ ->
-                CompletableFuture.allOf(*ShaderType.values().stream().map {
-                    CompletableFuture
-                        .supplyAsync({ Pair(it, loadShader(name.resourceManager.createResourceLocation("shaders/${name.location}_${it.extension}.glsl"))) }, backgroundExecutor)
+            .thenComposeAsync({
+                CompletableFuture.allOf(*ShaderType.values().map {
+                    CompletableFuture.supplyAsync({ Pair(it, loadShader(name.resourceManager.createResourceLocation("shaders/${name.location}_${it.extension}.glsl"))) }, backgroundExecutor)
                         .thenAcceptAsync({
                             if (it.second == null)
                                 return@thenAcceptAsync
                             compile(it.first, it.second!!)
                         }, mainExecutor)
-                }.toList().toTypedArray())
-                    .whenCompleteAsync({ _, e ->
-                        CompletableFuture.runAsync({
-                            if (e != null) {
-                                logger.error("Failed to create ${name.domain}/${name.location} shader.", e)
-                                free()
-                                return@runAsync
-                            }
+                }.toTypedArray())
+            }, backgroundExecutor).thenRunAsync({
+//                if (e != null) {
+//                    logger.error("Failed to create ${name.domain}/${name.location} shader.", e)
+//                    free()
+//                    return@handleAsync
+//                }
 
-                            if (program == 0) {
-                                logger.warn("No shader sources were found for ${name.domain}/${name.location} shader.")
-                                return@runAsync
-                            }
+                if (program == 0) {
+                    logger.warn("No shader sources were found for ${name.domain}/${name.location} shader.")
+                    return@thenRunAsync
+                }
 
-                            link()
-                        }, mainExecutor)
-                    }, mainExecutor)
-            }, backgroundExecutor)
+                link()
+            }, mainExecutor)
+//                CompletableFuture.allOf(*ShaderType.values().stream().map {
+//                    CompletableFuture
+//                        .supplyAsync({ Pair(it, loadShader(name.resourceManager.createResourceLocation("shaders/${name.location}_${it.extension}.glsl"))) }, backgroundExecutor)
+//                        .thenAcceptAsync({
+//                            if (it.second == null)
+//                                return@thenAcceptAsync
+//                            compile(it.first, it.second!!)
+//                        }, mainExecutor)
+//                }.toList().toTypedArray())
+//                    .whenCompleteAsync({ _, e ->
+//                        CompletableFuture.runAsync({
+//                            if (e != null) {
+//                                logger.error("Failed to create ${name.domain}/${name.location} shader.", e)
+//                                free()
+//                                return@runAsync
+//                            }
+//
+//                            if (program == 0) {
+//                                logger.warn("No shader sources were found for ${name.domain}/${name.location} shader.")
+//                                return@runAsync
+//                            }
+//
+//                            link()
+//                        }, mainExecutor)
+//                    }, mainExecutor)
     }
 
     override fun bind() {
@@ -186,7 +205,6 @@ class Shader internal constructor(private val name: ResourceLocation) : Bindable
 
         val MISSING = Shader(MasterResourceManager.createResourceLocation("missing"))
 
-        // TODO make async
         private fun loadShader(shaderLocation: ResourceLocation): CharSequence? {
             if (!shaderLocation.resourceExists)
                 return null

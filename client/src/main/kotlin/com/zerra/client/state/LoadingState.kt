@@ -6,21 +6,19 @@ import com.zerra.client.shader.ShaderManager
 import com.zerra.client.texture.TextureManager
 import com.zerra.client.vertex.VertexArray
 import com.zerra.client.vertex.VertexBuilder
+import com.zerra.common.util.ResourceReloader
 import com.zerra.common.util.resource.MasterResourceManager
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.joml.Matrix4f
 import org.lwjgl.opengl.GL33C.GL_FLOAT
 import java.util.concurrent.CompletableFuture
 
-class LoadingState(private val completeCallback: () -> Unit) : ClientState {
+class LoadingState(private val reloader: ResourceReloader, private val completeCallback: () -> Unit) : ClientState {
 
     private val testShader = ShaderManager.getShader(MasterResourceManager.createResourceLocation("quad"))
     private val testTextureLocation = MasterResourceManager.createResourceLocation("textures/loading.png")
     private val vao: VertexArray
 
-    private var loadingTask: CompletableFuture<Void> = CompletableFuture.completedFuture(null)
+    private var loadingTask: CompletableFuture<*> = CompletableFuture.completedFuture(null)
 
     init {
         VertexBuilder.reset().segment(GL_FLOAT, 2)
@@ -44,17 +42,14 @@ class LoadingState(private val completeCallback: () -> Unit) : ClientState {
             testShader.loadMatrix4f("transformation", Matrix4f())
         }
 
-        loadingTask = ZerraClient.getInstance().reload({
-            GlobalScope.launch {
-                it.run()
-            }
-        }, ZerraClient.getInstance())
+        // FIXME make this work lol
+        loadingTask = reloader.reload(Runnable::run, Runnable::run)
     }
 
     override fun update() {
         if (loadingTask.isDone && ZerraClient.getInstance().getRemainingTasks() == 0) {
-            completeCallback.invoke()
             logger.info("Finished async loading")
+            completeCallback.invoke()
         }
     }
 
