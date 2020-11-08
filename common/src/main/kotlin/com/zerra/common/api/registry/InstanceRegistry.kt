@@ -26,7 +26,7 @@ class InstanceRegistry<K, V : Any>: Registry<K, V>() {
         logger.info("Successfully registered entry $value")
     }
 
-    fun unregister(value: KClass<V>) {
+    fun unregister(value: K) {
         val entry = entries.remove(value)
         logger.info("Successfully unregistered entry $value")
     }
