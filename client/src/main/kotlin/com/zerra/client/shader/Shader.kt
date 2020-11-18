@@ -1,8 +1,9 @@
 package com.zerra.client.shader
 
 import bvanseg.kotlincommons.any.getLogger
-import bvanseg.kotlincommons.stream.stream
 import com.zerra.client.util.Bindable
+import com.zerra.common.util.Reloadable
+import com.zerra.common.util.resource.MasterResourceManager
 import com.zerra.common.util.resource.ResourceLocation
 import org.joml.*
 import org.lwjgl.opengl.GL20C
@@ -11,13 +12,15 @@ import org.lwjgl.system.NativeResource
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.util.*
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executor
 import kotlin.collections.HashMap
 
 /**
  * @author Ocelot5836
  * @since 0.0.1
  */
-class Shader internal constructor(private val name: ResourceLocation) : Bindable, NativeResource {
+class Shader internal constructor(private val name: ResourceLocation) : Bindable, Reloadable, NativeResource {
 
     private var program = 0
     private val shaders = IntArray(ShaderType.values().size)
@@ -57,57 +60,58 @@ class Shader internal constructor(private val name: ResourceLocation) : Bindable
         logger.debug("Linked ${name.domain}/${name.location} shader")
     }
 
-    /**
-     * Reloads all shader types and regenerates the program.
-     */
-    fun load() {
-        free()
-        try {
-            for (type in ShaderType.values()) {
-                val source = loadShader(ResourceLocation(name.resourceManager, name.domain, "shaders/${name.location}_${type.extension}.glsl")) ?: continue
-                compile(type, source)
-            }
+    override fun reload(backgroundExecutor: Executor, mainExecutor: Executor): CompletableFuture<*> {
+        if (this == MISSING)
+            return CompletableFuture.completedFuture(null)
+        return CompletableFuture.runAsync(this::free, mainExecutor)
+            .thenComposeAsync({
+                CompletableFuture.allOf(*ShaderType.values().map {
+                    CompletableFuture.supplyAsync({ Pair(it, loadShader(name.resourceManager.createResourceLocation("shaders/${name.location}_${it.extension}.glsl"))) }, backgroundExecutor)
+                        .thenAcceptAsync({
+                            if (it.second == null)
+                                return@thenAcceptAsync
+                            compile(it.first, it.second!!)
+                        }, mainExecutor)
+                }.toTypedArray())
+            }, backgroundExecutor).thenRunAsync({
+//                if (e != null) {
+//                    logger.error("Failed to create ${name.domain}/${name.location} shader.", e)
+//                    free()
+//                    return@handleAsync
+//                }
 
-            if (program == 0) {
-                logger.warn("No shader sources were found for ${name.domain}/${name.location} shader.")
-                return
-            }
-
-            link()
-        } catch (e: Exception) {
-            logger.error("Failed to create ${name.domain}/${name.location} shader.", e)
-            free()
-        }
-    }
-
-    /**
-     * Only reloads the specified shader types.
-     */
-    fun reload(vararg types: ShaderType) {
-        if (types.isEmpty())
-            throw IllegalArgumentException("No shaders specified to reload")
-        if (program == 0)
-            throw IllegalStateException("Shader has not been loaded")
-
-        try {
-            for (type in types.stream().distinct()) {
-                logger.debug("Reloading ${type.name.toLowerCase(Locale.ROOT)}")
-                val shader = shaders[type.ordinal]
-                if (shader != 0) {
-                    glDetachShader(program, shader)
-                    glDeleteShader(shader)
+                if (program == 0) {
+                    logger.warn("No shader sources were found for ${name.domain}/${name.location} shader.")
+                    return@thenRunAsync
                 }
 
-                if (!name.resourceManager.resourceExists("${name.location}_${type.extension}.glsl"))
-                    continue
-                val source = loadShader(ResourceLocation(name.resourceManager, name.domain, "${name.location}_${type.extension}.glsl"))!!
-                compile(type, source)
-            }
-            link()
-        } catch (e: Exception) {
-            logger.error("Failed to reload $name shader.", e)
-            free()
-        }
+                link()
+            }, mainExecutor)
+//                CompletableFuture.allOf(*ShaderType.values().stream().map {
+//                    CompletableFuture
+//                        .supplyAsync({ Pair(it, loadShader(name.resourceManager.createResourceLocation("shaders/${name.location}_${it.extension}.glsl"))) }, backgroundExecutor)
+//                        .thenAcceptAsync({
+//                            if (it.second == null)
+//                                return@thenAcceptAsync
+//                            compile(it.first, it.second!!)
+//                        }, mainExecutor)
+//                }.toList().toTypedArray())
+//                    .whenCompleteAsync({ _, e ->
+//                        CompletableFuture.runAsync({
+//                            if (e != null) {
+//                                logger.error("Failed to create ${name.domain}/${name.location} shader.", e)
+//                                free()
+//                                return@runAsync
+//                            }
+//
+//                            if (program == 0) {
+//                                logger.warn("No shader sources were found for ${name.domain}/${name.location} shader.")
+//                                return@runAsync
+//                            }
+//
+//                            link()
+//                        }, mainExecutor)
+//                    }, mainExecutor)
     }
 
     override fun bind() {
@@ -199,20 +203,20 @@ class Shader internal constructor(private val name: ResourceLocation) : Bindable
         private val MATRIX_3_2 = FloatArray(6)
         private val MATRIX_2_2 = FloatArray(4)
 
-        // TODO make async
+        val MISSING = Shader(MasterResourceManager.createResourceLocation("missing"))
+
         private fun loadShader(shaderLocation: ResourceLocation): CharSequence? {
             if (!shaderLocation.resourceExists)
                 return null
-            return shaderLocation.inputStream!!.runCatching {
+            return shaderLocation.use {
                 val out = ByteArrayOutputStream()
                 val buffer = ByteArray(1024)
                 var length: Int
-                while (this.read(buffer).also { length = it } >= 0) {
+                while (it.inputStream!!.read(buffer).also { l -> length = l } >= 0)
                     out.write(buffer, 0, length)
-                }
 
                 out.toString(Charsets.UTF_8)
-            }.getOrNull()
+            }
         }
     }
 }

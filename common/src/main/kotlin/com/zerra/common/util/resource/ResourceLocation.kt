@@ -11,8 +11,7 @@ import java.io.InputStream
  * @author Ocelot5836
  * @since 0.0.1
  */
-data class ResourceLocation(val resourceManager: ResourceManager, val domain: String, val location: String) :
-    AutoCloseable {
+data class ResourceLocation(val resourceManager: ResourceManager, val domain: String, val location: String) : AutoCloseable {
 
     val path: String
         get() = "${resourceManager.root}$domain/$location"
@@ -27,7 +26,7 @@ data class ResourceLocation(val resourceManager: ResourceManager, val domain: St
     val file: File? by lazy { if (resource != null) resource!!.classpathElementFile else null }
 
     override fun close() {
-        inputStream?.close()
+        resource?.close()
     }
 
     override fun toString(): String = path

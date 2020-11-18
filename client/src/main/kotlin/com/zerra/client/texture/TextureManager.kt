@@ -2,25 +2,43 @@ package com.zerra.client.texture;
 
 import bvanseg.kotlincommons.any.getLogger
 import com.google.gson.JsonParser
+import com.google.gson.JsonSyntaxException
+import com.zerra.common.util.Reloadable
 import com.zerra.common.util.resource.MasterResourceManager
 import com.zerra.common.util.resource.ResourceLocation
-import com.zerra.common.util.resource.ResourceManager
 import org.lwjgl.system.NativeResource
 import java.io.InputStreamReader
+import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executor
+import java.util.stream.StreamSupport
+import kotlin.collections.HashMap
 
-class TextureManager(private val resourceManager: ResourceManager) : NativeResource {
+object TextureManager : Reloadable, NativeResource {
 
+    private val logger = getLogger()
     private val textures = HashMap<ResourceLocation, Texture>()
+    private val mainTextures = arrayOf(MasterResourceManager.createResourceLocation("textures/loading.png"))
 
-    override fun free() {
-        textures.values.forEach(NativeResource::free)
-        textures.clear()
+    private fun preload(location: ResourceLocation) {
+        textures[location] = SimpleTexture(location)
+    }
+
+    private fun reloadTextures(reloadMain: Boolean, backgroundExecutor: Executor, mainExecutor: Executor): CompletableFuture<Void> {
+        return CompletableFuture.allOf(*textures.filter { reloadMain || !mainTextures.contains(it.key) }.map {
+            it.value.reload(backgroundExecutor, mainExecutor)
+        }.toTypedArray())
+    }
+
+    internal fun load(backgroundExecutor: Executor, mainExecutor: Executor): CompletableFuture<*> {
+        return CompletableFuture.runAsync({
+            mainTextures.forEach { preload(ResourceLocation(it)) }
+        }, mainExecutor).thenRunAsync({ reloadTextures(true, backgroundExecutor, mainExecutor).join() }, backgroundExecutor)
     }
 
     fun loadTexture(location: ResourceLocation, texture: Texture) {
         textures[location]?.free()
-        texture.load(resourceManager, this, Runnable::run, Runnable::run).join()
+        texture.reload(Runnable::run, Runnable::run).join()
         textures[location] = texture
     }
 
@@ -30,29 +48,38 @@ class TextureManager(private val resourceManager: ResourceManager) : NativeResou
         textures[location]?.bind()
     }
 
-    // TODO make async
-    fun load() {
-        MasterResourceManager.getAllResourceLocations { it == "textures/preload.json" }.forEach {
-            try {
-                it.inputStream?.use { stream ->
-                    InputStreamReader(stream).use { reader ->
-                        JsonParser.parseReader(reader).asJsonArray.forEach { element ->
-                            val location = it.resourceManager.createResourceLocation(element.asString)
-                            textures[location] = SimpleTexture(location)
+    override fun reload(backgroundExecutor: Executor, mainExecutor: Executor): CompletableFuture<*> {
+        return CompletableFuture.runAsync({
+            textures.entries.removeIf { !mainTextures.contains(it.key) }
+        }, mainExecutor).thenApplyAsync({
+            MasterResourceManager.getAllResourceLocations { it == "textures/preload.json" }.stream().map { location ->
+                try {
+                    location.use {
+                        InputStreamReader(it!!.inputStream!!).use { reader ->
+                            val array = JsonParser.parseReader(reader).asJsonArray
+                            for (element in array)
+                                if (!element.isJsonPrimitive || !element.asJsonPrimitive.isString)
+                                    throw JsonSyntaxException("Expected all elements to be primitive string")
+                            return@map StreamSupport.stream(array.spliterator(), false).map { element ->
+                                location.resourceManager.createResourceLocation(element.asString)
+                            }
                         }
                     }
+                } catch (e: Exception) {
+                    logger.error("Failed to load preloaded textures from $location", e)
                 }
-            } catch (e: Exception) {
-                logger.error("Failed to load preloaded textures from $it", e)
-            }
-        }
-        CompletableFuture.allOf(*textures.values.stream().map {
-            it.load(resourceManager, this, Runnable::run, Runnable::run)
-        }.toArray { size -> arrayOfNulls<CompletableFuture<Void>>(size) }).join()
+                return@map null
+            }.filter(Objects::nonNull).flatMap { it }.distinct()
+        }, backgroundExecutor).thenAcceptAsync({
+            it.forEach { location -> preload(ResourceLocation(location!!)) }
+        }, mainExecutor)
+            .thenRunAsync({ reloadTextures(false, backgroundExecutor, mainExecutor).join() }, backgroundExecutor)
+            .thenRunAsync({ logger.debug("Loaded ${textures.size} preloaded textures") }, mainExecutor)
     }
 
-    companion object {
-
-        private val logger = getLogger()
+    override fun free() {
+        MissingTexture.free()
+        textures.values.forEach(NativeResource::free)
+        textures.clear()
     }
 }

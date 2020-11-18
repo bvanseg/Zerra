@@ -6,6 +6,7 @@ import com.zerra.common.api.mod.ModLoader
 import com.zerra.common.api.registry.RegistryManager
 import com.zerra.common.api.state.StateManager
 import com.zerra.common.network.Side
+import com.zerra.common.util.ResourceReloader
 import com.zerra.common.util.resource.MasterResourceManager
 import com.zerra.common.util.resource.ResourceManager
 import java.util.concurrent.ConcurrentLinkedDeque
@@ -47,6 +48,7 @@ abstract class Zerra : Executor {
      * this value set for them locally, and any child threads of theirs will be the same, and so on.
      */
     protected val localSide = InheritableThreadLocal<Side>()
+    val reloader = ResourceReloader()
     private val executionQueue = ConcurrentLinkedDeque<Runnable>()
 
     fun getSide(): Side = localSide.get()
@@ -56,9 +58,17 @@ abstract class Zerra : Executor {
     }
 
     fun flushTasks() {
-        while (executionQueue.isNotEmpty())
-            executionQueue.pop().run()
+        while (executionQueue.isNotEmpty()) {
+            try {
+                executionQueue.peek().run()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            executionQueue.remove()
+        }
     }
+
+    fun getRemainingTasks() = executionQueue.size
 
     open fun init() {
         ModLoader.loadAllMods()

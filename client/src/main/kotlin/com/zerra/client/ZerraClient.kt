@@ -3,8 +3,10 @@ package com.zerra.client
 import bvanseg.kotlincommons.any.getLogger
 import com.zerra.client.render.GameWindow
 import com.zerra.client.state.ClientGameState
+import com.zerra.client.shader.ShaderManager
 import com.zerra.client.state.ClientState
 import com.zerra.client.state.ClientStateManager
+import com.zerra.client.state.LoadingState
 import com.zerra.client.state.TestRenderState
 import com.zerra.client.texture.TextureManager
 import com.zerra.client.vertex.VertexBuilder
@@ -13,7 +15,9 @@ import com.zerra.common.api.state.StateManager
 import com.zerra.common.network.Side
 import com.zerra.common.util.resource.MasterResourceManager
 import com.zerra.server.ZerraServer
+import org.lwjgl.opengl.GL11C.glClearColor
 import org.lwjgl.opengl.GL33C
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author Boston Vanseghi
@@ -49,10 +53,10 @@ class ZerraClient private constructor() : Zerra() {
         }
     }
 
-    val textureManager = TextureManager(getResourceManager())
-
     init {
         localSide.set(Side.CLIENT)
+        reloader.add(TextureManager)
+        reloader.add(ShaderManager)
     }
 
     override fun init() {
@@ -68,17 +72,20 @@ class ZerraClient private constructor() : Zerra() {
         GameWindow.create(1280, 720, "Zerra")
         GameWindow.setVsync(true)
 
-        textureManager.load()
+        glClearColor(1f, 1f, 1f, 1f)
 
-        println(MasterResourceManager.getAllResourceLocations())
-        println(MasterResourceManager.getAllResourceLocations { it == "textures/preload.json" })
-
-        MasterResourceManager.createResourceLocation("")
+        // Initial load, no async
+        CompletableFuture.allOf(
+            TextureManager.load(Runnable::run, Runnable::run),
+            ShaderManager.load(Runnable::run, Runnable::run)
+        ).join()
+        logger.info("Finished initial loading")
     }
 
     override fun cleanup() {
         ClientStateManager.activeState.dispose()
-        textureManager.free()
+        TextureManager.free()
+        ShaderManager.free()
         VertexBuilder.free()
     }
 
@@ -97,10 +104,11 @@ class ZerraClient private constructor() : Zerra() {
 
     override fun createGame() {
         logger.info("Creating new game")
-//        ClientStateManager.setState(ClientGameState())
-        ClientStateManager.setState(TestRenderState(textureManager, getResourceManager()))
+        ClientStateManager.setState(LoadingState(reloader) { ClientStateManager.setState(TestRenderState()) }) // TODO temporary
+//        ClientStateManager.setState(TestRenderState(textureManager, getResourceManager()))
     }
 
     override fun getStateManager(): StateManager = ClientStateManager
     override fun getRegistryManager(): ClientRegistryManager = ClientRegistryManager
+
 }
